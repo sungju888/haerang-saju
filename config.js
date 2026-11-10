@@ -2,7 +2,7 @@
  * BIZ 는 전자상거래법·PG 심사에 필요한 사업자 표시(넥시스). */
 window.CFG = {
   PIXEL_ID: '',
-  API: /^(127\.0\.0\.1|localhost)$/.test(location.hostname) ? 'http://127.0.0.1:8812' : 'https://haerang-api.sayblackday.workers.dev',
+  API: 'https://haerang-api.sayblackday.workers.dev',   // 계산·결제 워커(로컬 미리보기도 이걸 쓴다, CORS 로 github.io·localhost 만 허용)
   MEDIA_V: 4,           // 그림·영상을 갈아 끼우면 올린다(/m/* 는 일주일 캐시)
   BIZ: {
     name: '넥시스', ceo: '조성주', no: '482-26-02122', tel: '010-7224-4668',
