@@ -58,11 +58,14 @@
   /* ---- 0. 가게 첫 화면: 캐릭터마다 다른 사주를 고른다 ----
      live 인 것만 누르면 들어가고, 나머지는 「곧 열려요」(그림·풀이를 만드는 중). 그림은 m/<캐릭터>/key.jpg */
   const S = t.S;
+  /* 풀이가 다 만들어진 새 상품(서버 px/index.js 에 등록된 것). 여기 넣으면 「곧 열려요」가 풀린다 */
+  const PX_LIVE = ['couple', 'zodiac'];
+  const BANNER_GO = { seoha: 'classic', yeonji: 'couple', selene: 'zodiac' };
   const READERS = [
     { id: 'haerang', live: true, img: 'm/haerang/key.jpg' },
-    { id: 'seoha', live: false, img: 'm/seoha/key.jpg' },
-    { id: 'yeonji', live: false, img: 'm/yeonji/key.jpg' },
-    { id: 'selene', live: false, img: 'm/selene/key.jpg' },
+    { id: 'seoha', live: PX_LIVE.includes('classic'), img: 'm/seoha/key.jpg' },
+    { id: 'yeonji', live: PX_LIVE.includes('couple'), img: 'm/yeonji/key.jpg' },
+    { id: 'selene', live: PX_LIVE.includes('zodiac'), img: 'm/selene/key.jpg' },
   ];
   let MODE = 'read';                       // 'read' = 해랑 풀이, 'manse' = 무료 만세력
   function shop() {
@@ -72,26 +75,27 @@
     const banner = r => { const [cat, nm, line] = S.banner[r.id]; return `<button class="bn ${r.live ? '' : 'off'}" data-r="${r.id}">
         <img src="${r.img}${mv}" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><span class="bn-sh"></span>
         <span class="bn-tx"><em>${esc(cat)}</em><b>${esc(nm)}</b><small>${esc(line)}</small>
-        <i>${r.live ? esc(S.from(I.money(I.FROM))) + ' · ' + esc(S.open) + ' ›' : esc(S.soon)}</i></span></button>`; };
+        <i>${r.live ? esc(BANNER_GO[r.id] ? I.money(PXPRICE(BANNER_GO[r.id])) : S.from(I.money(I.FROM))) + ' · ' + esc(S.open) + ' ›' : esc(S.soon)}</i></span></button>`; };
     render(`<div class="shopw">
       <h1 class="sh-h">${esc(S.hi)}</h1><p class="sh-s">${esc(S.hiSub)}</p>
       <div class="bns" id="bns">${READERS.map(banner).join('')}</div>
       <div class="dots">${READERS.map((r, i) => `<span class="${i ? '' : 'on'}"></span>`).join('')}</div>
       <h2 class="sh-t">${esc(S.secTopic)}</h2><p class="sh-ts">${esc(S.secTopicSub)}</p>
       <div class="cats" id="cats">${S.cats.map(([k, n], i) => `<button data-c="${k}" class="${i ? '' : 'sel'}">${esc(n)}</button>`).join('')}</div>
-      <div class="menu" id="menu">${S.menu.map(([id, cat, ic, nm, d, rd, live]) => { const on = live !== 0; return `<button class="mn ${on ? '' : 'off'}" data-id="${id}" data-cat="${cat}">
+      <div class="menu" id="menu">${S.menu.map(([id, cat, ic, nm, d, rd, live]) => { const on = live !== 0 || PX_LIVE.includes(id); return `<button class="mn ${on ? '' : 'off'}" data-id="${id}" data-cat="${cat}">
         <span class="mn-i">${rd !== 'free' ? `<img src="m/${rd}/key.jpg${mv}" alt="" loading="lazy" onerror="this.remove()">` : ''}<span>${ic}</span></span>
-        <span class="mn-t"><b>${esc(nm)}</b><small>${esc(d)}</small><em>${rd === 'free' ? esc(S.free) : on ? esc(S.from(I.money(I.FROM))) : esc(S.soon)}</em></span></button>`; }).join('')}</div>
+        <span class="mn-t"><b>${esc(nm)}</b><small>${esc(d)}</small><em>${rd === 'free' ? esc(S.free) : !on ? esc(S.soon) : PXM[id] ? esc(I.money(PXPRICE(id))) : esc(S.from(I.money(I.FROM)))}</em></span></button>`; }).join('')}</div>
       ${owned.length ? `<h2 class="sh-t">${esc(S.secMine)}</h2><p class="sh-ts">${esc(S.mineD)}</p><div class="mine">${owned.slice(0, 5).map((o, i) => `<a class="mi" href="${BASE}?r=${o.rid}&k=${o.key}"><span>📜 ${esc(S.mineItem(i + 1))}</span><em>${esc(S.mineOpen)} ›</em></a>`).join('')}</div>` : ''}
       <h2 class="sh-t">${esc(S.secSoon)}</h2><p class="sh-ts">${esc(S.soonD)}</p>
       <div class="soons">${READERS.filter(r => !r.live).map(r => `<div class="sn"><img src="${r.img}${mv}" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><b>${esc(S.banner[r.id][0])}</b><small>${esc(S.banner[r.id][1])}</small></div>`).join('')}</div>
       ${bizFoot()}</div>`, false, true);
-    ui.querySelectorAll('.bn').forEach(b => b.onclick = () => { const r = READERS.find(x => x.id === b.dataset.r); if (!r.live) { b.classList.add('shake'); setTimeout(() => b.classList.remove('shake'), 500); return; } track('pick_' + r.id); MODE = 'read'; B.focus = null; go(intro); });
+    ui.querySelectorAll('.bn').forEach(b => b.onclick = () => { const r = READERS.find(x => x.id === b.dataset.r); if (!r.live) { b.classList.add('shake'); setTimeout(() => b.classList.remove('shake'), 500); return; } track('pick_' + r.id); if (BANNER_GO[r.id]) { pxStart(BANNER_GO[r.id]); return; } MODE = 'read'; B.focus = null; go(intro); });
     ui.querySelectorAll('#cats button').forEach(b => b.onclick = () => { ui.querySelectorAll('#cats button').forEach(x => x.classList.toggle('sel', x === b)); ui.querySelectorAll('.mn').forEach(m => m.hidden = b.dataset.c !== 'all' && m.dataset.cat !== b.dataset.c); });
     ui.querySelectorAll('.mn').forEach(b => b.onclick = () => {
       const id = b.dataset.id; track('menu_' + id);
       if (b.classList.contains('off')) { b.classList.add('shake'); setTimeout(() => b.classList.remove('shake'), 500); return; }
       if (id === 'manse') { MODE = 'manse'; go(ask, 'who'); return; }
+      if (PXM[id]) { pxStart(id); return; }
       MODE = 'read'; B.focus = id === 'all' ? null : id; go(intro);
     });
     const bns = $('#bns'), dots = ui.querySelectorAll('.dots span');
@@ -108,6 +112,90 @@
       </section></div>`, true);
     $('#hr').onclick = () => { track('manse_to_read'); MODE = 'read'; go(result); };
     $('#ag').onclick = () => { MODE = 'manse'; go(ask, 'date'); };
+  }
+
+
+  /* ---- 새 사주 상품(px): 궁합·재회·결혼·정통·별자리 … ----
+     가게 메뉴 → (19금이면 나이 확인) → 캐릭터 첫 화면 → 사람마다 생일 입력 → 맛보기 → 결제 → 전체 */
+  const PXM = {   // 메뉴 id → [캐릭터, 사람 수(1·2·'n'), 19금]
+    reunion: ['haerang', 2], marry: ['seoha', 1], some: ['yeonji', 2], couple: ['yeonji', 2], group: ['yeonji', 'n'],
+    idol: ['yeonji', 2], classic: ['seoha', 1], night: ['yeonji', 2, 1], desire: ['haerang', 1, 1], zodiac: ['selene', 1],
+  };
+  let PXID = null, PEOPLE = [], PXP = null, PXO = null;
+  const PXT = id => S.px[id] || {};
+  const mediaOf = rd => { if (rd === 'haerang') return media('key', true); curMedia = ''; still.src = `m/${rd}/key.jpg?v=${window.CFG.MEDIA_V || 1}`; still.classList.add('kb'); vid.classList.remove('on'); vid.removeAttribute('src'); };
+  const freshB = () => Object.assign(B, { name: '', gender: null, cal: 'solar', leap: false, y: 1995, m: 1, d: 1, hh: null, mm: 0, place: I.place0 });
+  function pxStart(id) {
+    PXID = id; PEOPLE = []; MODE = 'px'; freshB();
+    track('px_' + id);
+    go(PXM[id][2] ? pxAdult : pxIntro);
+  }
+  function pxAdult() {
+    mediaOf(PXM[PXID][0]);
+    render(`<div class="fold"><h2 class="q">${esc(S.adultQ)}</h2><p class="sub">${esc(S.adultD)}</p>
+      <button class="btn" id="ok">${esc(S.adultYes)}</button><button class="opt" id="no">${esc(S.adultNo)}</button></div>`, true);
+    $('#ok').onclick = () => go(pxIntro);
+    $('#no').onclick = () => go(shop);
+  }
+  function pxIntro() {
+    const x = PXT(PXID); mediaOf(PXM[PXID][0]);
+    render(`<div class="fold"><p class="pxcat">${esc(x.cat || '')}</p><h1 class="hook">${x.hook}</h1>
+      <p class="sub">${esc(x.sub || '')}</p>
+      <button class="btn" id="go">${esc(x.go || t.enter)} · ${esc(I.money(PXPRICE(PXID)))}</button><p class="fine">${t.fine1}</p></div>`);
+    $('#go').onclick = () => { track('px_start'); go(ask, 'who'); };
+  }
+  const PXPRICE = id => ({ kr: [19900, 39000], sg: [1890, 3590], my: [5700, 10800], us: [1399, 2799] }[MK][id === 'classic' ? 1 : 0]);   // 서버 cfg.js PX_PRICE 와 같게
+  /* 입력 질문 머리말: 몇 번째 사람인지 */
+  const pxWho = () => { const x = PXT(PXID), i = PEOPLE.length; return (x.who || [])[Math.min(i, (x.who || []).length - 1)] || ''; };
+  function pxPersonDone() {
+    PEOPLE.push({ name: B.name, gender: B.gender, cal: B.cal, leap: B.leap, y: B.y, m: B.m, d: B.d, hh: B.hh, mm: B.mm, place: B.place });
+    const n = PXM[PXID][1];
+    if (n === 'n') { go(pxMore); return; }
+    if (PEOPLE.length < n) { freshB(); go(ask, 'who'); return; }
+    go(pxReading);
+  }
+  function pxMore() {
+    render(`<h2 class="q">${esc(S.groupQ(PEOPLE.length))}</h2>
+      <div class="mine">${PEOPLE.map((p, i) => `<div class="mi"><span>${i + 1}. ${esc(p.name || S.noName(i + 1))}</span><em>${p.y}.${p.m}.${p.d}</em></div>`).join('')}</div><div class="gap"></div>
+      ${PEOPLE.length < 6 ? `<button class="${PEOPLE.length < 2 ? 'btn' : 'opt'}" id="add">${esc(S.groupAdd)}</button>` : ''}
+      ${PEOPLE.length >= 2 ? `<button class="btn" id="done">${esc(S.groupDone(PEOPLE.length))}</button>` : ''}`, true);
+    const a = $('#add'); if (a) a.onclick = () => { freshB(); go(ask, 'who'); };
+    const d = $('#done'); if (d) d.onclick = () => go(pxReading);
+  }
+  function pxReading() {
+    app.classList.remove('blur');
+    render(bubble([PXT(PXID).wait || t.hmm]));
+    const t0 = Date.now();
+    api('/api/px', { px: PXID, people: PEOPLE, lang: LG, mk: MK, sid }).then(j => {
+      setTimeout(() => {
+        PXP = j.p; PXO = j.offer; RID = j.rid; KEY = j.key;
+        ls.set('cw_lastpx', JSON.stringify({ id: PXID, p: PXP, o: PXO, rid: RID, key: KEY }));
+        go(pxPreview);
+      }, Math.max(0, 2200 - (Date.now() - t0)));
+    }).catch(e => { render(bubble([e.message || t.inkErr]) + `<button class="btn" id="re">${t.retry}</button>`); $('#re').onclick = () => { PEOPLE = []; freshB(); go(ask, 'who'); }; });
+  }
+  const whoChips = who => `<div class="pxwho">${who.map(w => `<div class="pxw"><b>${esc(w.name || '')}</b><span>${w.pillars.map(c => c.none ? '<i>?</i>' : `<i class="el-${c.ge}">${c.g}</i>`).join('')}</span><span>${w.pillars.map(c => c.none ? '<i>?</i>' : `<i class="el-${c.je}">${c.j}</i>`).join('')}</span></div>`).join('')}</div>`;
+  const pxHead = p => `<div class="pxhead"><p class="pxcat">${esc(PXT(p.px).cat || '')}</p><h2 class="q">${esc(p.title || '')}</h2>
+    ${p.score != null ? `<div class="big-score">${esc(S.scoreL)}<b>${p.score}</b>/ 100</div>` : ''}${p.sub ? `<p class="pxsub">${esc(p.sub)}</p>` : ''}</div>${p.who && p.px !== 'zodiac' ? whoChips(p.who) : ''}`;
+  const pxCard = c => `<div class="chap"><h3>${esc(c.t)}</h3>${c.p.map(x => `<p>${esc(x)}</p>`).join('')}</div>`;
+  function pxPreview() {
+    track('px_preview');
+    const p = PXP, o = PXO, nm = PXT(p.px).nm || NAME;
+    render(`<div class="result"><section class="sec in">${pxHead(p)}
+      ${p.free.map(pxCard).join('')}
+      <div class="bubble"><div class="who">${esc(nm)}</div><p>${esc(p.teaser || '')}</p><p class="blurline">${esc(S.lockedMore)}</p></div>
+      <div class="toc">${p.toc.map((c, i) => `<div class="chx"><span class="cn">${t.chN(i + 1)}</span><span class="ct">${esc(c)}</span><span class="lk">🔒</span></div>`).join('')}</div>
+      ${o.price != null ? `<button class="btn" id="buy">${esc(t.openFor(won(o.price, o.cur)))}</button>` : `<button class="btn" id="buy">${esc(S.mineOpen)}</button>`}
+      <p class="fine">${t.payFine}</p><button class="opt" id="home">${esc(S.toShop)}</button></section></div>`, true);
+    $('#buy').onclick = () => { if (o.price == null) return openFull(); track('checkout'); pay(p.px); };
+    $('#home').onclick = () => go(shop);
+  }
+  function showPx(f) {
+    track('px_full'); mediaOf(f.reader);
+    render(`<div class="result"><section class="sec in">${pxHead(f)}${(f.ch || []).map(pxCard).join('')}
+      ${homeBox()}<button class="opt" id="home">${esc(S.toShop)}</button></section></div>`, true);
+    bindHome(`${BASE}?r=${RID}&k=${KEY}&src=home`);
+    $('#home').onclick = () => { history.replaceState(null, '', BASE); go(shop); };
   }
 
   /* ---- 1. 첫 화면 ---- */
@@ -145,9 +233,10 @@
   const PLACES = I.places;
   const opts = (a, b, v, f) => { let s = ''; for (let x = a; x <= b; x++) s += `<option value="${x}" ${x === v ? 'selected' : ''}>${f ? f(x) : x}</option>`; return s; };
   function ask(step) {
-    media('s4_chart'); app.classList.add('blur');
+    if (MODE === 'px') mediaOf(PXM[PXID][0]); else media('s4_chart');
+    app.classList.add('blur');
     if (step === 'who') {
-      render(`<h2 class="q">${t.qWho}</h2><p class="qs">${t.qsWho}</p>
+      render(`<h2 class="q">${MODE === 'px' && pxWho() ? esc(pxWho()) : t.qWho}</h2><p class="qs">${t.qsWho}</p>
         <input class="inp" id="nm" maxlength="10" placeholder="${t.ph}" value="${esc(B.name)}" autocomplete="off">
         <div class="gap"></div><div class="seg" id="gd"><button data-g="f" class="${B.gender === 'f' ? 'sel' : ''}">${t.female}</button><button data-g="m" class="${B.gender === 'm' ? 'sel' : ''}">${t.male}</button></div>
         <div class="err" id="er"></div><button class="btn" id="ok">${t.next}</button>`, true);
@@ -180,7 +269,7 @@
         <div class="gap"></div><button class="btn" id="ok">${t.next}</button><button class="opt" id="no">${t.noTime}</button>`, true);
       const plx = $('#plx'); if (plx) plx.onclick = () => { plx.remove(); $('#plw').hidden = false; };
       const save = () => { B.place = $('#pl').value; };
-      const done = () => { track('input_done', { time: B.hh != null }); go(reading); };
+      const done = () => { track('input_done', { time: B.hh != null }); if (MODE === 'px') pxPersonDone(); else go(reading); };
       $('#ok').onclick = () => { B.hh = +$('#hh').value; B.mm = +$('#mm').value; save(); done(); };
       $('#no').onclick = () => { B.hh = null; save(); done(); };
     }
@@ -340,10 +429,10 @@
     const once = async () => {
       try {
         const j = await api('/api/confirm', hp ? { orderId: oid, hp: 1 } : { paymentKey: qs.get('paymentKey'), orderId: oid, amount: +qs.get('amount') });
-        track('paid', { v: (j.cur === 'SGD' ? j.amount / 100 : j.amount) || 0, cur: j.cur }); if (j.just) track('paid_' + j.just); saveOwned(j.rid, j.key);
+        track('paid', { v: (j.cur === 'KRW' ? j.amount : j.amount / 100) || 0, cur: j.cur }); if (j.just) track('paid_' + j.just); saveOwned(j.rid, j.key);
         RID = j.rid; KEY = j.key;
         history.replaceState(null, '', `${BASE}?r=${j.rid}&k=${j.key}`);
-        showFull(j.f, j.offers);
+        if (j.px) showPx(j.px); else showFull(j.f, j.offers);
       } catch (e) {
         if (hp && e.code === undefined && e.status === 402 && ++tries < 6) { setTimeout(once, 2500); return; }   // 결제사가 아직 완료로 안 바꿨으면 잠깐 기다린다
         render(bubble([e.message || t.notConfirmed, t.ifCharged]) + `<p class="fine">${t.orderNo} ${esc(oid || '')}</p><button class="btn" id="re">${esc(t.backPrev)}</button>`);
@@ -353,13 +442,14 @@
     once();
   }
   function backToPreview() {
+    try { const x = JSON.parse(ls.get('cw_lastpx') || 'null'); const pend = JSON.parse(ls.get('cw_pending') || 'null'); if (x && pend && pend.rid === x.rid) { PXID = x.id; PXP = x.p; PXO = x.o; RID = x.rid; KEY = x.key; MODE = 'px'; history.replaceState(null, '', BASE); go(pxPreview); return; } } catch (e) { }
     try { const l = JSON.parse(ls.get('cw_last') || 'null'); if (l) { P = l.p; RID = l.rid; KEY = l.key; OFFERS = l.offers || OFFERS; TOCL = l.toc || TOCL; history.replaceState(null, '', BASE); go(result); return; } } catch (e) { }
     location.href = BASE;
   }
   function saveOwned(rid, key) { let a = []; try { a = JSON.parse(ls.get('cw_owned') || '[]'); } catch (e) { } if (!a.find(x => x.rid === rid)) a.unshift({ rid, key }); ls.set('cw_owned', JSON.stringify(a.slice(0, 20))); }
   async function openFull(rid, key) {
     media('s5_reading'); render(bubble([t.pulling]));
-    try { const j = await api(`/api/full?rid=${rid || RID}&key=${key || KEY}&lang=${LG}`); RID = j.rid; KEY = j.key; showFull(j.f, j.offers); }
+    try { const j = await api(`/api/full?rid=${rid || RID}&key=${key || KEY}&lang=${LG}`); RID = j.rid; KEY = j.key; if (j.px) showPx(j.px); else showFull(j.f, j.offers); }
     catch (e) { render(bubble([e.status === 402 ? t.unpaid : (e.message || t.notFound)]) + `<button class="btn" id="re">${t.home}</button>`); $('#re').onclick = () => location.href = BASE; }
   }
 

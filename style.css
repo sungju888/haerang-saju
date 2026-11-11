@@ -228,3 +228,15 @@ select,.inp{width:100%;min-height:52px;padding:12px;border-radius:12px;border:1p
 .mn-t em{font-style:normal;font-size:12.5px;color:var(--gold);margin-top:3px;font-weight:700}
 .mn.off{opacity:.62}
 .mn.off .mn-t em{color:var(--dim);font-weight:400}
+/* 새 사주 상품 */
+.pxcat{font-size:12.5px;color:var(--gold);letter-spacing:.06em;text-align:center;margin:0 0 6px}
+.pxhead{text-align:center;margin-bottom:10px}
+.pxhead .q{margin-bottom:6px}
+.pxsub{color:var(--ink);font-size:15px;margin:6px 0 0}
+.pxwho{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:10px 0 14px}
+.pxw{background:var(--glass);border:1px solid var(--line);border-radius:12px;padding:8px 10px;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:96px}
+.pxw b{font-size:13px}
+.pxw span{display:flex;gap:3px}
+.pxw i{font-style:normal;font-family:"Noto Serif SC",serif;font-size:15px;width:20px;text-align:center}
+.chap h3{font:700 17px/1.35 "Gowun Batang","Noto Serif SC",serif;margin:0 0 8px;color:var(--gold)}
+.pxw i{color:#16131c;border-radius:4px}
