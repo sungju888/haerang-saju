@@ -287,3 +287,4 @@ select,.inp{width:100%;min-height:52px;padding:12px;border-radius:12px;border:1p
 .msi b{font:700 11px/1 "Noto Serif SC","Gowun Batang",serif;color:var(--gold);letter-spacing:.12em}
 .msi span{display:grid;grid-template-columns:repeat(4,13px);gap:2px}
 .msi i{font:700 10px/14px "Noto Serif SC",serif;font-style:normal;text-align:center;border-radius:3px;color:#16131c}
+.pxone{flex:none;align-self:center;border:1px solid var(--line);background:rgba(226,194,122,.12);color:var(--gold);border-radius:10px;padding:6px 9px;font-size:12.5px;font-weight:700;cursor:pointer}

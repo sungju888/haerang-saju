@@ -60,7 +60,7 @@
      live 인 것만 누르면 들어가고, 나머지는 「곧 열려요」(그림·풀이를 만드는 중). 그림은 m/<캐릭터>/key.jpg */
   const S = t.S;
   /* 풀이가 다 만들어진 새 상품(서버 px/index.js 에 등록된 것). 여기 넣으면 「곧 열려요」가 풀린다 */
-  const PX_LIVE = ['couple', 'zodiac', 'reunion', 'marry', 'some', 'group', 'idol', 'night', 'desire', 'classic'];
+  const PX_LIVE = ['couple', 'zodiac', 'reunion', 'marry', 'some', 'group', 'idol', 'night', 'desire', 'classic', 'career'];
   const BANNER_GO = { seoha: 'classic', yeonji: 'couple', selene: 'zodiac' };
   const READERS = [
     { id: 'haerang', live: true, img: 'm/haerang/key.jpg' },
@@ -93,7 +93,7 @@
       <div class="cats" id="cats">${S.cats.map(([k, n], i) => `<button data-c="${k}" class="${i ? '' : 'sel'}">${esc(n)}</button>`).join('')}</div>
       <div class="menu" id="menu">${MENU.map(([id, cat, ic, nm, d, rd, live]) => { const on = live !== 0 || PX_LIVE.includes(id); return `<button class="mn ${on ? '' : 'off'}" data-id="${id}" data-cat="${cat}">
         <span class="mn-i">${rd !== 'free' ? `<img src="m/${rd}/key.jpg${mv}" alt="" loading="lazy" onerror="this.remove()"><span>${ic}</span>` : MANSE_ICON}</span>
-        <span class="mn-t"><b>${esc(nm)}</b><small>${esc(d)}</small><em>${rd === 'free' ? esc(S.free) : !on ? esc(S.soon) : PXM[id] ? esc(I.money(PXPRICE(id))) : esc(S.from(I.money(I.FROM)))}</em></span></button>`; }).join('')}</div>
+        <span class="mn-t"><b>${esc(nm)}</b><small>${esc(d)}</small><em>${rd === 'free' ? esc(S.free) : !on ? esc(S.soon) : esc(S.from(I.money(I.FROM)))}</em></span></button>`; }).join('')}</div>
       ${owned.length || canLogin() || AUTH ? `<h2 class="sh-t">${esc(S.secMine)}</h2><p class="sh-ts">${esc(S.mineD)}</p><div id="acct"></div>` : ''}
       ${READERS.some(r => !r.live) ? `<h2 class="sh-t">${esc(S.secSoon)}</h2><p class="sh-ts">${esc(S.soonD)}</p>` : ''}
       <div class="soons">${READERS.filter(r => !r.live).map(r => `<div class="sn"><img src="${r.img}${mv}" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><b>${esc(S.banner[r.id][0])}</b><small>${esc(S.banner[r.id][1])}</small></div>`).join('')}</div>
@@ -203,7 +203,7 @@
     const t0 = Date.now();
     api('/api/px', { px: PXID, people: PEOPLE, lang: LG, mk: MK, sid }).then(j => {
       setTimeout(() => {
-        PXP = j.p; PXO = j.offer; RID = j.rid; KEY = j.key;
+        PXP = j.p; PXO = j.offers; RID = j.rid; KEY = j.key;
         ls.set('cw_lastpx', JSON.stringify({ id: PXID, p: PXP, o: PXO, rid: RID, key: KEY }));
         go(pxPreview);
       }, Math.max(0, 2200 - (Date.now() - t0)));
@@ -213,23 +213,46 @@
   const pxHead = p => `<div class="pxhead"><p class="pxcat">${esc(PXT(p.px).cat || '')}</p><h2 class="q">${esc(p.title || '')}</h2>
     ${p.score != null ? `<div class="big-score">${esc(S.scoreL)}<b>${p.score}</b>/ 100</div>` : ''}${p.sub ? `<p class="pxsub">${esc(p.sub)}</p>` : ''}</div>${p.who && p.px !== 'zodiac' ? whoChips(p.who) : ''}`;
   const pxCard = c => `<div class="chap"><h3>${esc(c.t)}</h3>${c.p.map(x => `<p>${esc(x)}</p>`).join('')}</div>`;
+  /* 해랑처럼 세 단계: 장마다 「이 장만」 · 핵심(앞 절반) · 전체. 위 단계 카드는 담긴 장 제목을 다 보여 준다 */
+  const pxTiers = (of) => {
+    const card = (k, top) => { const x = of[k]; if (!x || x.price == null) return '';
+      return `<div class="tier ${top ? 'tier-top' : ''}"><div class="tr-h"><span class="tr-tag">${esc(S[k === 'all' ? 'tagAll' : 'tagHalf'])}</span><b>${esc(x.label)}</b></div>
+        <ul>${x.chs.map(c => `<li>${esc(c)}</li>`).join('')}</ul>
+        <div class="tr-p"><span class="now">${won(x.price, of.cur)}</span>${x.price < x.list ? `<s>${won(x.list, of.cur)}</s><span class="cred">${esc(t.credit(won(x.list - x.price, of.cur)))}</span>` : ''}</div>
+        <button class="${top ? 'btn' : 'opt'} tr-b" data-tier="${k}">${esc(t.openFor(won(x.price, of.cur)))}</button></div>`; };
+    return `<div class="tiers">${card('all', true)}${card('half', false)}</div>`;
+  };
+  const pxToc = (toc, of) => `<div class="toc">${toc.map((c, i) => of.one.open[i] ? '' : `<div class="chx"><span class="cn">${t.chN(i + 1)}</span><span class="ct">${esc(c)}<small>${esc(S.chOnly(won(of.one.price, of.cur)))}</small></span><button class="pxone" data-ch="${i}">🔒 ${esc(won(of.one.price, of.cur))}</button></div>`).join('')}</div>`;
+  const bindPxBuy = (px) => {
+    ui.querySelectorAll('[data-tier]').forEach(b => b.onclick = () => { track('checkout'); track('checkout_' + b.dataset.tier); pay(b.dataset.tier); });
+    ui.querySelectorAll('[data-ch]').forEach(b => b.onclick = () => { track('checkout'); track('checkout_one'); pay('one', undefined, +b.dataset.ch); });
+  };
   function pxPreview() {
     track('px_preview');
-    const p = PXP, o = PXO, nm = PXT(p.px).nm || NAME;
+    const p = PXP, of = PXO, nm = PXT(p.px).nm || NAME;
     render(`<div class="result"><section class="sec in">${pxHead(p)}
       ${p.free.map(pxCard).join('')}
       <div class="bubble"><div class="who">${esc(nm)}</div><p>${esc(p.teaser || '')}</p><p class="blurline">${esc(S.lockedMore)}</p></div>
-      <div class="toc">${p.toc.map((c, i) => `<div class="chx"><span class="cn">${t.chN(i + 1)}</span><span class="ct">${esc(c)}</span><span class="lk">🔒</span></div>`).join('')}</div>
-      ${o.price != null ? `<button class="btn" id="buy">${esc(t.openFor(won(o.price, o.cur)))}</button>` : `<button class="btn" id="buy">${esc(S.mineOpen)}</button>`}
+      ${say([S.pickCh(won(of.one.price, of.cur))])}
+      ${pxToc(p.toc, of)}
+      ${say([S.wholeQ])}
+      ${pxTiers(of)}
       <p class="fine">${t.payFine}</p><button class="opt" id="home">${esc(S.toShop)}</button></section></div>`, true);
-    $('#buy').onclick = () => { if (o.price == null) return openFull(); track('checkout'); pay(p.px); };
+    bindPxBuy(p.px);
     $('#home').onclick = () => go(shop);
   }
   function showPx(f) {
     track('px_full'); mediaOf(f.reader); setHomeIcon(f.reader);
-    render(`<div class="result"><section class="sec in">${pxHead(f)}${homeBox()}${(f.ch || []).map(pxCard).join('')}
+    const of = f.offers, opened = (f.ch || []).filter(c => !c.locked).length;
+    if (of) PXO = of;
+    const lockCard = (c, i) => `<div class="chap lockd"><div class="cn">${t.chN(i + 1)} 🔒</div><h3>${esc(c.t)}</h3><p>${esc(c.teaser || '')}</p><p class="blurline">${t.lockedP}</p><button class="opt" data-ch="${i}">${esc(S.chOnly(won(of.one.price, of.cur)))}</button></div>`;
+    const left = of && (of.all.price != null || of.half.price != null);
+    render(`<div class="result"><section class="sec in">${pxHead(f)}${homeBox()}
+      ${(f.ch || []).map((c, i) => [c, i]).sort((x, y) => (x[0].locked ? 1 : 0) - (y[0].locked ? 1 : 0)).map(([c, i]) => c.locked ? lockCard(c, i) : `<div class="chap"><div class="cn">${t.chN(i + 1)}</div>${pxCard(c).replace('<div class="chap">', '')}`).join('')}
+      ${left ? `${say([S.moreQ])}${pxTiers(of)}` : ''}
       <button class="opt" id="home">${esc(S.toShop)}</button></section></div>`, true);
     bindHome(`${BASE}?r=${RID}&k=${KEY}&src=home`);
+    bindPxBuy(f.px);
     $('#home').onclick = () => { history.replaceState(null, '', BASE); go(shop); };
   }
 
@@ -475,7 +498,7 @@
     if (window.TossPayments) return Promise.resolve();
     return new Promise((ok, no) => { const s = document.createElement('script'); s.src = 'https://js.tosspayments.com/v2/standard'; s.onload = ok; s.onerror = () => no(new Error(t.sdkErr)); document.head.appendChild(s); });
   }
-  async function pay(prod, focus) {
+  async function pay(prod, focus, ch) {
     const m = document.createElement('div'); m.className = 'modal';
     m.innerHTML = `<div class="sheet"><div class="sh-h"><b>${t.payT}</b><button data-close aria-label="${t.close}">×</button></div>
       <div class="sh-sum"><span id="snm">…</span><b id="samt"></b></div>
@@ -489,7 +512,7 @@
     m.addEventListener('click', e => { if (e.target === m || e.target.closest('[data-close]')) close(); });
     const er = x => { const el = m.querySelector('#per'); if (el) el.textContent = x; };
     try {
-      const o = await api('/api/order', { rid: RID, key: KEY, prod, focus, ret: BASE });
+      const o = await api('/api/order', { rid: RID, key: KEY, prod, focus, ch, ret: BASE });
       if (o.owned) { close(); openFull(); return; }
       track('pay_open');
       m.querySelector('#snm').textContent = o.orderName; m.querySelector('#samt').textContent = won(o.amount, o.cur);
