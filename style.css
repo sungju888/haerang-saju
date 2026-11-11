@@ -92,6 +92,8 @@ select,.inp{width:100%;min-height:52px;padding:12px;border-radius:12px;border:1p
 .price .now{font:700 34px/1 "Gowun Batang","Noto Serif SC",serif;color:var(--gold)}
 .price span{color:var(--dim);font-size:13px}
 .fine{font-size:12px;color:var(--dim);text-align:center;margin-top:10px;line-height:1.6}
+.fold{min-height:calc(100vh - env(safe-area-inset-bottom) - 18px);min-height:calc(100dvh - env(safe-area-inset-bottom) - 18px);display:flex;flex-direction:column;justify-content:flex-end}
+.fold .fine{margin-bottom:6px}
 .biz{font-size:11px;color:#7d776d;line-height:1.7;margin:28px 0 8px;text-align:center}
 .biz a{color:#9a9386}
 /* 전체 풀이 */

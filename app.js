@@ -58,10 +58,10 @@
   /* ---- 1. 첫 화면 ---- */
   function intro() {
     media('key', true); preload('s1_enter');
-    render(`<h1 class="hook">${t.hook}</h1>
+    render(`<div class="fold"><h1 class="hook">${t.hook}</h1>
       <p class="sub">${t.sub(I.money(I.FROM))}</p>
       <button class="btn" id="go">${t.enter}</button>
-      <p class="fine">${t.fine1}</p>${bizFoot()}`);
+      <p class="fine">${t.fine1}</p></div>${bizFoot()}`);   // 회사 정보는 첫 화면 아래(스크롤하면 보임)
     $('#go').onclick = () => { track('start'); go(scene, 0); };
   }
 
