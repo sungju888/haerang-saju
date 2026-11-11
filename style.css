@@ -1,7 +1,7 @@
 :root{--gold:#e2c27a;--gold2:#b98b3e;--red:#c8553d;--ink:#f3eee4;--dim:#b8b0a2;--glass:rgba(18,15,22,.66);--line:rgba(226,194,122,.32);
   --e-목:#6aa57a;--e-화:#d46a52;--e-토:#c9a257;--e-금:#c7cbd3;--e-수:#5b86bd}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;background:#0b0a10;color:var(--ink);font-family:"Noto Sans KR",-apple-system,sans-serif;overflow:hidden;word-break:keep-all;touch-action:manipulation;-webkit-touch-callout:none}
+html,body{margin:0;height:100%;background:#0b0a10;color:var(--ink);font-family:"Noto Sans KR","Noto Sans SC",-apple-system,sans-serif;overflow:hidden;word-break:keep-all;touch-action:manipulation;-webkit-touch-callout:none}
 button,input,select{font:inherit;font-size:16px;touch-action:manipulation}
 button{color:inherit}
 #app{position:fixed;inset:0;max-width:480px;margin:0 auto;overflow:hidden;background:#0b0a10}
@@ -14,14 +14,14 @@ button{color:inherit}
 .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,10,16,.55) 0,transparent 16%,transparent 46%,rgba(11,10,16,.94) 80%)}
 .blur .stage img,.blur .stage video{filter:blur(14px) brightness(.5);transform:scale(1.08)}
 .top{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:calc(env(safe-area-inset-top) + 12px) 16px 0;z-index:5}
-.brand{font:700 16px/1 "Gowun Batang",serif;letter-spacing:.3em;color:var(--gold)}
+.brand{font:700 16px/1 "Gowun Batang","Noto Serif SC",serif;letter-spacing:.3em;color:var(--gold)}
 .back,.topr{width:36px;height:36px}
 .back{border:0;background:none;color:var(--ink);font-size:28px;opacity:.8;visibility:hidden}
 .back.on{visibility:visible}
 #ui{position:absolute;left:0;right:0;bottom:0;padding:0 16px calc(env(safe-area-inset-bottom) + 18px);z-index:4;max-height:100%;overflow-y:auto}
 .fade{animation:fade .45s ease both}
 @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.hook{font:700 32px/1.25 "Gowun Batang",serif;text-align:center;text-shadow:0 2px 14px #000;margin:0 0 10px}
+.hook{font:700 32px/1.25 "Gowun Batang","Noto Serif SC",serif;text-align:center;text-shadow:0 2px 14px #000;margin:0 0 10px}
 .sub{color:var(--dim);text-align:center;font-size:14.5px;line-height:1.55;margin:0 8px 18px}
 .btn{display:block;width:100%;min-height:54px;padding:16px;border:0;border-radius:14px;font-weight:700;font-size:16.5px;color:#1d1405;background:linear-gradient(#f0d595,var(--gold2));box-shadow:0 6px 24px rgba(185,139,62,.35);cursor:pointer}
 .btn:disabled{opacity:.45}
@@ -30,11 +30,11 @@ button{color:inherit}
 .opt:active,.opt.sel{background:rgba(226,194,122,.22);border-color:var(--gold)}
 .skip{display:block;margin:14px auto 0;background:none;border:0;color:var(--dim);font-size:13.5px;text-decoration:underline;cursor:pointer;padding:8px}
 .bubble{background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:6px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-.bubble .who{font:700 12.5px/1 "Noto Sans KR";letter-spacing:.1em;color:var(--gold);margin-bottom:7px}
+.bubble .who{font:700 12.5px/1 "Noto Sans KR","Noto Sans SC";letter-spacing:.1em;color:var(--gold);margin-bottom:7px}
 .bubble p{margin:0;font-size:16px;line-height:1.55}
 .bubble p+p{margin-top:7px}
-.nar p{color:var(--dim);font-family:"Gowun Batang",serif}
-.q{font:700 24px/1.3 "Gowun Batang",serif;margin:0 0 14px;text-shadow:0 2px 10px #000}
+.nar p{color:var(--dim);font-family:"Gowun Batang","Noto Serif SC",serif}
+.q{font:700 24px/1.3 "Gowun Batang","Noto Serif SC",serif;margin:0 0 14px;text-shadow:0 2px 10px #000}
 .qs{color:var(--dim);font-size:13.5px;margin:-8px 0 12px;line-height:1.5}
 .row{display:flex;gap:8px}
 .row>*{flex:1;min-width:0}
@@ -51,15 +51,15 @@ select,.inp{width:100%;min-height:52px;padding:12px;border-radius:12px;border:1p
 .sec{opacity:0;transform:translateY(16px);transition:opacity .7s,transform .7s;margin-bottom:34px}
 .sec.in{opacity:1;transform:none}
 .say{text-align:center;margin:8px 0 14px}
-.say p{margin:0;font:700 23px/1.35 "Gowun Batang",serif;text-shadow:0 2px 12px #000}
+.say p{margin:0;font:700 23px/1.35 "Gowun Batang","Noto Serif SC",serif;text-shadow:0 2px 12px #000}
 .say p+p{margin-top:6px}
 .wonguk{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:4px 0 10px}
 .wg-col{background:var(--glass);border:1px solid var(--line);border-radius:14px;padding:8px 4px 10px;text-align:center}
 .wg-col.me{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
 .wg-lab{font-size:12px;color:var(--dim)}
 .wg-ss{font-size:11.5px;color:var(--gold);margin:4px 0 2px;min-height:15px}
-.wg-ch{width:48px;height:48px;margin:4px auto;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font:700 24px/1 "Gowun Batang",serif;color:#16110a}
-.wg-ch small{font:500 10.5px/1 "Noto Sans KR";margin-top:3px;opacity:.75}
+.wg-ch{width:48px;height:48px;margin:4px auto;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;font:700 24px/1 "Gowun Batang","Noto Serif SC",serif;color:#16110a}
+.wg-ch small{font:500 10.5px/1 "Noto Sans KR","Noto Sans SC";margin-top:3px;opacity:.75}
 .wg-none{height:118px;display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:12.5px;line-height:1.4}
 .el-목{background:var(--e-목)}.el-화{background:var(--e-화)}.el-토{background:var(--e-토)}.el-금{background:var(--e-금)}.el-수{background:var(--e-수)}
 .elbar{display:flex;gap:6px;margin:6px 0 12px}
@@ -67,45 +67,45 @@ select,.inp{width:100%;min-height:52px;padding:12px;border-radius:12px;border:1p
 .elbar i{display:block;height:6px;border-radius:3px;margin:0 0 5px;background:rgba(255,255,255,.12);overflow:hidden}
 .elbar i b{display:block;height:100%}
 .meta{font-size:12.5px;color:var(--dim);text-align:center;margin:-2px 0 12px;line-height:1.5}
-.me-card .h{font:700 19px/1.3 "Gowun Batang",serif;color:var(--gold);margin-bottom:6px}
+.me-card .h{font:700 19px/1.3 "Gowun Batang","Noto Serif SC",serif;color:var(--gold);margin-bottom:6px}
 .cold p{font-size:16.5px;line-height:1.65}
-.big-year{font:700 82px/1 "Gowun Batang",serif;text-align:center;color:var(--gold);text-shadow:0 0 30px rgba(226,194,122,.45);margin:4px 0 0}
+.big-year{font:700 82px/1 "Gowun Batang","Noto Serif SC",serif;text-align:center;color:var(--gold);text-shadow:0 0 30px rgba(226,194,122,.45);margin:4px 0 0}
 .big-score{text-align:center;margin:6px 0 4px;font-size:14px;color:var(--dim)}
-.big-score b{font:700 40px/1 "Gowun Batang",serif;color:var(--ink);margin:0 4px}
+.big-score b{font:700 40px/1 "Gowun Batang","Noto Serif SC",serif;color:var(--ink);margin:0 4px}
 .card{border:1px solid var(--gold);border-radius:16px;padding:16px;margin:10px 0;background:linear-gradient(180deg,rgba(48,34,12,.6),rgba(18,15,22,.88))}
-.card .ck{font:700 12.5px/1 "Noto Sans KR";letter-spacing:.08em;color:var(--gold);margin-bottom:10px}
-.card .ch2{font:700 20px/1.3 "Gowun Batang",serif;margin:0 0 8px}
+.card .ck{font:700 12.5px/1 "Noto Sans KR","Noto Sans SC";letter-spacing:.08em;color:var(--gold);margin-bottom:10px}
+.card .ch2{font:700 20px/1.3 "Gowun Batang","Noto Serif SC",serif;margin:0 0 8px}
 .card p{margin:0 0 8px;font-size:15.5px;line-height:1.55}
 .blurline{filter:blur(5px);user-select:none;-webkit-user-select:none}
 .love dl{margin:0;display:grid;grid-template-columns:84px 1fr;gap:10px 10px}
 .love dt{color:var(--dim);font-size:13.5px;padding-top:2px}
 .love dd{margin:0;font-size:15px;line-height:1.5}
-.love dd.when{font:700 20px/1.2 "Gowun Batang",serif;color:var(--gold)}
+.love dd.when{font:700 20px/1.2 "Gowun Batang","Noto Serif SC",serif;color:var(--gold)}
 .toc .chx{display:flex;gap:12px;align-items:center;border-bottom:1px solid rgba(255,255,255,.08);padding:12px 2px}
-.toc .cn{font:700 13px "Gowun Batang",serif;color:var(--gold);width:34px;flex:none}
+.toc .cn{font:700 13px "Gowun Batang","Noto Serif SC",serif;color:var(--gold);width:34px;flex:none}
 .toc .ct{flex:1;font-size:15px}
 .toc .lk{font-size:13px;color:var(--dim)}
 .pay{border:1px solid var(--gold);border-radius:18px;padding:18px 16px;margin:14px 0 6px;background:linear-gradient(180deg,rgba(54,36,10,.8),rgba(18,15,22,.9))}
-.pay .t{font:700 19px/1.3 "Gowun Batang",serif}
+.pay .t{font:700 19px/1.3 "Gowun Batang","Noto Serif SC",serif}
 .pay ul{margin:10px 0;padding-left:18px;color:var(--dim);font-size:14px;line-height:1.7}
 .price{display:flex;align-items:baseline;gap:8px;margin:8px 0 12px}
-.price .now{font:700 34px/1 "Gowun Batang",serif;color:var(--gold)}
+.price .now{font:700 34px/1 "Gowun Batang","Noto Serif SC",serif;color:var(--gold)}
 .price span{color:var(--dim);font-size:13px}
 .fine{font-size:12px;color:var(--dim);text-align:center;margin-top:10px;line-height:1.6}
 .biz{font-size:11px;color:#7d776d;line-height:1.7;margin:28px 0 8px;text-align:center}
 .biz a{color:#9a9386}
 /* 전체 풀이 */
 .chap{background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:16px;margin:0 0 14px}
-.chap .cn{font:700 12.5px "Noto Sans KR";letter-spacing:.1em;color:var(--gold)}
-.chap h3{font:700 21px/1.3 "Gowun Batang",serif;margin:4px 0 10px}
+.chap .cn{font:700 12.5px "Noto Sans KR","Noto Sans SC";letter-spacing:.1em;color:var(--gold)}
+.chap h3{font:700 21px/1.3 "Gowun Batang","Noto Serif SC",serif;margin:4px 0 10px}
 .chap p{margin:0 0 10px;font-size:15.5px;line-height:1.7}
 .months{margin-top:6px}
 .mo{display:flex;gap:10px;padding:10px 0;border-top:1px solid rgba(255,255,255,.08);font-size:14.5px;line-height:1.5}
-.mo b{flex:none;width:40px;color:var(--gold);font-family:"Gowun Batang",serif}
+.mo b{flex:none;width:40px;color:var(--gold);font-family:"Gowun Batang","Noto Serif SC",serif}
 .mo small{display:block;color:var(--dim);font-size:12.5px}
 .dy{display:flex;gap:10px;align-items:center;margin:8px 0}
-.dy .gz{flex:none;width:64px;text-align:center;padding:8px 0;border:1px solid var(--line);border-radius:12px;font:700 18px "Gowun Batang",serif}
-.dy .gz small{display:block;font:500 11px "Noto Sans KR";color:var(--dim);margin-top:2px}
+.dy .gz{flex:none;width:64px;text-align:center;padding:8px 0;border:1px solid var(--line);border-radius:12px;font:700 18px "Gowun Batang","Noto Serif SC",serif}
+.dy .gz small{display:block;font:500 11px "Noto Sans KR","Noto Sans SC";color:var(--dim);margin-top:2px}
 .dy p{margin:0;font-size:15px;line-height:1.55}
 .savebox{border:1px dashed var(--line);border-radius:14px;padding:14px;margin:6px 0 14px;font-size:14px;color:var(--dim);line-height:1.6}
 .savebox .btn{margin-top:10px;min-height:46px;padding:12px;font-size:15px}
@@ -125,11 +125,11 @@ select,.inp{width:100%;min-height:52px;padding:12px;border-radius:12px;border:1p
 .tier{border:1px solid var(--line);border-radius:16px;padding:14px 14px 12px;background:var(--glass)}
 .tier.tier-top{border-color:var(--gold);background:linear-gradient(180deg,rgba(54,36,10,.8),rgba(18,15,22,.9))}
 .tr-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.tr-h b{font:700 18px/1.3 "Gowun Batang",serif}
+.tr-h b{font:700 18px/1.3 "Gowun Batang","Noto Serif SC",serif}
 .tr-tag{font-size:11.5px;color:var(--gold);border:1px solid var(--line);border-radius:20px;padding:2px 8px}
 .tier ul{margin:8px 0;padding-left:18px;color:var(--dim);font-size:14px;line-height:1.65}
 .tr-p{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin:4px 0 8px}
-.tr-p .now{font:700 26px/1 "Gowun Batang",serif;color:var(--gold)}
+.tr-p .now{font:700 26px/1 "Gowun Batang","Noto Serif SC",serif;color:var(--gold)}
 .tr-p s{color:var(--dim);font-size:13px}
 .tr-p .cred{font-size:12px;color:#9fd3a8}
 .tr-b{margin-top:4px}
@@ -160,3 +160,6 @@ select,.inp{width:100%;min-height:52px;padding:12px;border-radius:12px;border:1p
 .hk{font-size:12.5px;color:var(--dim);margin:6px 0 0;line-height:1.5}
 .lnk{display:block;margin:10px auto 0;background:none;border:0;color:var(--dim);font-size:13px;text-decoration:underline;cursor:pointer}
 [hidden]{display:none!important}
+
+.lang{width:36px;height:36px;border-radius:50%;border:1px solid rgba(226,194,122,.35);background:rgba(11,10,16,.5);color:var(--gold);font:600 12px/1 "Noto Sans KR","Noto Sans SC",sans-serif;cursor:pointer}
+.pmx{margin:4px 18px 8px;font-size:14px;color:#4e5968}
