@@ -119,9 +119,11 @@
       const h = B.hh == null ? 12 : B.hh;
       render(`<h2 class="q">${t.qTime}</h2><p class="qs">${t.qsTime}</p>
         <div class="row"><select id="hh">${opts(0, 23, h, t.hh)}</select><select id="mm">${opts(0, 59, B.mm, t.mm)}</select></div>
-        <div class="gap"></div><select id="pl">${PLACES.map(([k, v]) => `<option value="${k}" ${k === B.place ? 'selected' : ''}>${t.placeL}${v}</option>`).join('')}</select>
-        <p class="qs" style="margin:8px 2px 0">${t.placeNote}</p>
+        ${B.place === I.place0 ? `<button class="lnk" id="plx">${t.otherPlace}</button>` : ''}
+        <div id="plw" ${B.place === I.place0 ? 'hidden' : ''}><div class="gap"></div><select id="pl">${PLACES.map(([k, v]) => `<option value="${k}" ${k === B.place ? 'selected' : ''}>${t.placeL}${v}</option>`).join('')}</select>
+        <p class="qs" style="margin:8px 2px 0">${t.placeNote}</p></div>
         <div class="gap"></div><button class="btn" id="ok">${t.next}</button><button class="opt" id="no">${t.noTime}</button>`, true);
+      const plx = $('#plx'); if (plx) plx.onclick = () => { plx.remove(); $('#plw').hidden = false; };
       const save = () => { B.place = $('#pl').value; };
       const done = () => { track('input_done', { time: B.hh != null }); go(reading); };
       $('#ok').onclick = () => { B.hh = +$('#hh').value; B.mm = +$('#mm').value; save(); done(); };

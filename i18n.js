@@ -36,7 +36,7 @@
       noDay: (m, d) => `${m}월에는 ${d}일이 없어.`, lunar30: '음력은 30일까지야.',
       qTime: '몇 시에 태어났어?', qsTime: '시주는 그 두 시간 안에서 갈려. 대충이라도 알면 넣어.',
       hh: x => (x < 12 ? '오전 ' : '오후 ') + (x % 12 === 0 ? 12 : x % 12) + '시', mm: x => pad(x) + '분',
-      placeL: '태어난 곳: ', placeNote: '태어난 곳 경도로 진태양시를 맞춰(서울은 표준시보다 약 32분 늦어).', noTime: '시간은 몰라',
+      otherPlace: '다른 곳에서 태어났어요 ›', placeL: '태어난 곳: ', placeNote: MK === 'sg' ? '태어난 곳 경도로 진태양시를 맞춰.' : '태어난 곳 경도로 진태양시를 맞춰(서울은 표준시보다 약 32분 늦어).', noTime: '시간은 몰라',
       hmm: '흠…', inkErr: '먹이 번졌어. 다시 해 보자.', retry: '다시 하기', netErr: '잠깐 연결이 안 됐어.',
       timeUnknown: '시간<br>모름',
       meta: (p, y, m, d) => `양력 ${y}.${m}.${d} · 음력 ${p.lunar.replace(/-/g, '.')} · ${p.tti}띠${p.lmt ? ` · 진태양시 ${p.lmt}` : ''}`,
@@ -100,7 +100,7 @@
       noDay: (m, d) => `${MO[m - 1]} doesn't have a ${d}th.`, lunar30: 'Lunar months only go up to 30.',
       qTime: 'What time were you born?', qsTime: 'The hour pillar changes every two hours. A rough time is fine.',
       hh: x => (x % 12 === 0 ? 12 : x % 12) + (x < 12 ? ' AM' : ' PM'), mm: x => ':' + pad(x),
-      placeL: 'Born in: ', placeNote: "I correct for true solar time using your birthplace's longitude (Singapore runs about 65 minutes behind clock time).", noTime: "I don't know the time",
+      otherPlace: 'Born outside Singapore / Malaysia? ›', placeL: 'Born in: ', placeNote: "I correct for true solar time using your birthplace's longitude (Singapore runs about 65 minutes behind clock time).", noTime: "I don't know the time",
       hmm: 'Hmm…', inkErr: 'The ink smudged. Let\'s try again.', retry: 'Try again', netErr: 'Connection hiccup.',
       timeUnknown: 'Time<br>unknown',
       meta: (p, y, m, d) => `Solar ${d} ${MO[m - 1]} ${y} · Lunar ${p.lunar} · ${p.tti}${p.lmt ? ` · True solar time ${p.lmt}` : ''}`,
@@ -164,7 +164,7 @@
       noDay: (m, d) => `${m}月没有${d}日。`, lunar30: '农历最多到30日。',
       qTime: '几点出生的？', qsTime: '时柱每两个小时一换，大概知道也好。',
       hh: x => (x < 12 ? '上午' : '下午') + (x % 12 === 0 ? 12 : x % 12) + '点', mm: x => pad(x) + '分',
-      placeL: '出生地：', placeNote: '按出生地经度换算真太阳时（新加坡比钟表时间慢约65分钟）。', noTime: '不知道时间',
+      otherPlace: '不是在新马出生？›', placeL: '出生地：', placeNote: '按出生地经度换算真太阳时（新加坡比钟表时间慢约65分钟）。', noTime: '不知道时间',
       hmm: '嗯……', inkErr: '墨晕开了，再来一次。', retry: '重来', netErr: '连接出了点问题。',
       timeUnknown: '时间<br>不详',
       meta: (p, y, m, d) => `阳历 ${y}.${m}.${d} · 农历 ${p.lunar.replace(/-/g, '.')} · 属${p.tti}${p.lmt ? ` · 真太阳时 ${p.lmt}` : ''}`,
@@ -213,7 +213,7 @@
     },
   };
   const PLACES = {
-    kr: [['seoul', '서울'], ['incheon', '인천'], ['gyeonggi', '경기'], ['gangwon', '강원(춘천·원주)'], ['gangneung', '강원(강릉·동해)'], ['daejeon', '대전'], ['sejong', '세종'], ['chungbuk', '충북'], ['chungnam', '충남'], ['gwangju', '광주'], ['jeonbuk', '전북'], ['jeonnam', '전남'], ['daegu', '대구'], ['gyeongbuk', '경북'], ['busan', '부산'], ['ulsan', '울산'], ['gyeongnam', '경남'], ['jeju', '제주'], ['unknown', '모름(서울 기준)']],
+    kr: [['seoul', '서울'], ['incheon', '인천'], ['gyeonggi', '경기'], ['gangwon', '강원(춘천·원주)'], ['gangneung', '강원(강릉·동해)'], ['daejeon', '대전'], ['sejong', '세종'], ['chungbuk', '충북'], ['chungnam', '충남'], ['gwangju', '광주'], ['jeonbuk', '전북'], ['jeonnam', '전남'], ['daegu', '대구'], ['gyeongbuk', '경북'], ['busan', '부산'], ['ulsan', '울산'], ['gyeongnam', '경남'], ['jeju', '제주'], ['unknown', '모름(서울 기준)'], ['singapore', '해외: 싱가포르'], ['kl', '해외: 말레이시아']],
     sg: {
       en: [['singapore', 'Singapore'], ['johor', 'Johor Bahru'], ['kl', 'Kuala Lumpur'], ['penang', 'Penang'], ['sg_unknown', 'Not sure (use Singapore)'], ['seoul', 'Seoul, Korea']],
       zh: [['singapore', '新加坡'], ['johor', '新山'], ['kl', '吉隆坡'], ['penang', '槟城'], ['sg_unknown', '不确定（按新加坡）'], ['seoul', '韩国首尔']],
