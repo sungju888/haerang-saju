@@ -14,7 +14,7 @@
   const josa = (w, a, b) => { const c = String(w).charCodeAt(String(w).length - 1) - 0xac00; return w + (c >= 0 && c <= 11171 && c % 28 ? a : b); };
   const pad = x => String(x).padStart(2, '0');
   const money = (n, cur) => (cur || (MK === 'sg' ? 'SGD' : 'KRW')) === 'SGD' ? 'S$' + (n / 100).toFixed(2) : (LG === 'ko' ? n.toLocaleString('ko-KR') + '원' : '₩' + n.toLocaleString('en-US'));
-  const FROM = MK === 'sg' ? 190 : 1000;
+  const FROM = MK === 'sg' ? 690 : 6900;   // 첫 화면 「…부터」(cfg.js 의 one 값과 맞춘다)
 
   const SELLER = { name: 'SOODY SDN. BHD.', reg: '202601029138 (1691233-P)', addr: '21-05 Jazz Suites, Jalan Seri Tanjung Pinang, 10470 Tanjung Tokong, Penang, Malaysia', mail: 'contact@soody.date', tel: '010-7224-4668' };
 
