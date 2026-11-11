@@ -337,6 +337,7 @@
   };
   /* 새 사주 상품 화면 말 */
   Object.assign(T.ko.S, {
+    meLast: (n, d, h) => `지난번에 넣은 정보: ${n || '이름 없음'} · ${d}${h ? ' ' + h : ''}`, meGo: '이 정보로 바로 보기', meOther: '다른 사람 정보로 넣기',
     pickCh: p => `궁금한 장 하나만 먼저 열어 볼 수도 있어. 장마다 ${p}.`, chOnly: p => `이 장만 ${p}`, wholeQ: '아니면 한 번에 — 앞의 핵심만, 또는 전부.', moreQ: '나머지 장도 열어 볼래? 이미 낸 돈은 빼 줄게.', tagHalf: '핵심', tagAll: '전부',
     hiUser: n => `${n || '나'}님 보관함`, logout: '로그아웃', mineEmpty: '아직 산 풀이가 없어.', loginWhy: '로그인하면 산 풀이가 폰을 바꿔도 남고, 생일을 다시 안 넣어도 돼.', kakao: '카카오로 시작하기', loginErr: '로그인이 안 됐어. 다시 해 줘.',
     scoreL: '궁합 점수', adultQ: '29금 — 성인만 들어와', adultD: '수위 꽤 높아. 어른들끼리의 솔직한 밤 얘기야.', adultYes: '네, 19세 이상이에요', adultNo: '돌아갈게요',
@@ -357,6 +358,7 @@
     },
   });
   Object.assign(T.en.S, {
+    meLast: (n, d, h) => `Last time: ${n || 'no name'} · ${d}${h ? ' ' + h : ''}`, meGo: 'Use this and continue', meOther: 'Enter someone else',
     pickCh: p => `You can open just the chapter you're curious about. ${p} each.`, chOnly: p => `This chapter only · ${p}`, wholeQ: 'Or all at once — just the core, or everything.', moreQ: 'Open the rest? What you already paid comes off.', tagHalf: 'Core', tagAll: 'Everything',
     hiUser: n => `${n ? n + "'s" : 'Your'} readings`, logout: 'Log out', mineEmpty: 'No readings yet.', loginWhy: 'Sign in to keep your readings even on a new phone, and skip typing your birthday next time.', kakao: 'Continue with Kakao', loginErr: "Sign-in didn't work. Try again.",
     scoreL: 'Match score', adultQ: '19+ only from here', adultD: "It gets spicy. Grown-up, honest after-dark talk.", adultYes: "Yes, I'm 19 or older", adultNo: 'Take me back',
@@ -377,6 +379,7 @@
     },
   });
   Object.assign(T.zh.S, {
+    meLast: (n, d, h) => `上次填写：${n || '未填名字'} · ${d}${h ? ' ' + h : ''}`, meGo: '用这个直接看', meOther: '填别人的信息',
     pickCh: p => `也可以只先开你最想看的一章，每章${p}。`, chOnly: p => `只开这一章 ${p}`, wholeQ: '或者一次看完——只看核心，或全部。', moreQ: '其余章节也要看吗？已付的会扣掉。', tagHalf: '核心', tagAll: '全部',
     hiUser: n => `${n || '我'}的解读`, logout: '退出登录', mineEmpty: '还没有买过的解读。', loginWhy: '登录后，换手机也能看到买过的解读，下次也不用再填生日。', kakao: '用Kakao登录', loginErr: '登录失败，请再试一次。',
     scoreL: '契合分', adultQ: '以下内容仅限19岁以上', adultD: '尺度很大，是成年人之间坦白的夜话。', adultYes: '是的，我已满19岁', adultNo: '返回',

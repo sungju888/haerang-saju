@@ -288,3 +288,7 @@ select,.inp{width:100%;min-height:52px;padding:12px;border-radius:12px;border:1p
 .msi span{display:grid;grid-template-columns:repeat(4,13px);gap:2px}
 .msi i{font:700 10px/14px "Noto Serif SC",serif;font-style:normal;text-align:center;border-radius:3px;color:#16131c}
 .pxone{flex:none;align-self:center;border:1px solid var(--line);background:rgba(226,194,122,.12);color:var(--gold);border-radius:10px;padding:6px 9px;font-size:12.5px;font-weight:700;cursor:pointer}
+.mecard{background:rgba(226,194,122,.1);border:1px solid rgba(226,194,122,.45);border-radius:14px;padding:12px;margin-bottom:16px;display:flex;flex-direction:column;gap:8px}
+.mecard span{font-size:14px;color:var(--ink)}
+.mecard .btn{min-height:46px;padding:12px;font-size:15px}
+.mecard .lnk{align-self:center}

@@ -358,10 +358,17 @@
     if (MODE === 'px') mediaOf(PXM[PXID][0]); else media('s4_chart');
     app.classList.add('blur');
     if (step === 'who') {
-      render(`<h2 class="q">${MODE === 'px' && pxWho() ? esc(pxWho()) : t.qWho}</h2><p class="qs">${t.qsWho}</p>
+      /* 지난번에 넣은 내 정보가 있으면(이 폰) 한 번에 건너뛰기 — 나(첫 번째 사람)일 때만 */
+      const me = (MODE !== 'px' || !PEOPLE.length) && (() => { try { return JSON.parse(ls.get('cw_me') || 'null'); } catch (e) { return null; } })();
+      const meCard = me && me.gender ? `<div class="mecard"><span>${esc(S.meLast(me.name, `${me.y}.${me.m}.${me.d}${me.cal === 'lunar' ? ' (' + t.lunar + ')' : ''}`, me.hh == null ? '' : `${String(me.hh).padStart(2, '0')}:${String(me.mm || 0).padStart(2, '0')}`))}</span><button class="btn" id="useme">${esc(S.meGo)}</button><button class="lnk" id="notme">${esc(S.meOther)}</button></div>` : '';
+      render(`${meCard}<h2 class="q">${MODE === 'px' && pxWho() ? esc(pxWho()) : t.qWho}</h2><p class="qs">${t.qsWho}</p>
         <input class="inp" id="nm" maxlength="10" placeholder="${t.ph}" value="${esc(B.name)}" autocomplete="off">
         <div class="gap"></div><div class="seg" id="gd"><button data-g="f" class="${B.gender === 'f' ? 'sel' : ''}">${t.female}</button><button data-g="m" class="${B.gender === 'm' ? 'sel' : ''}">${t.male}</button></div>
         <div class="err" id="er"></div><button class="btn" id="ok">${t.next}</button><p class="safe">${esc(t.safe)} <a href="${LG === 'ko' ? 'privacy' : 'privacy-en'}" target="_blank">›</a></p>`, true);
+      if (me && me.gender) {
+        $('#useme').onclick = () => { Object.assign(B, me, { place: me.place || I.place0 }); track('input_me'); track('input_done', { time: B.hh != null }); if (MODE === 'px') pxPersonDone(); else go(reading); };
+        $('#notme').onclick = () => { $('.mecard').remove(); Object.assign(B, { name: '', gender: null }); $('#nm').value = ''; ui.querySelectorAll('#gd button').forEach(x => x.classList.remove('sel')); };
+      }
       ui.querySelectorAll('#gd button').forEach(b => b.onclick = () => { B.gender = b.dataset.g; ui.querySelectorAll('#gd button').forEach(x => x.classList.toggle('sel', x === b)); $('#ok').textContent = t.next; });
       $('#ok').textContent = B.gender ? t.next : t.pickG;
       $('#ok').onclick = () => { if (!B.gender) { $('#er').textContent = t.needG; return; } B.name = $('#nm').value.trim().slice(0, 10); go(ask, 'date'); };
@@ -602,7 +609,7 @@
     if (left.length) track('upsell_view');
     bindBuy();
     bindHome(link);
-    $('#again').onclick = () => { history.replaceState(null, '', BASE); Object.assign(B, { name: '', gender: null, focus: null }); hist.length = 0; go(ask, 'who'); };
+    $('#again').onclick = () => { history.replaceState(null, '', BASE); Object.assign(B, { name: '', gender: null, focus: null }); fillMe(); hist.length = 0; go(ask, 'who'); };
   }
 
   /* ---- 홈 화면에 두기: 첫 결제 뒤에 권한다 ----
