@@ -53,7 +53,8 @@
   function go(fn, ...a) { hist.push([fn, a]); back.classList.toggle('on', hist.length > 1); fn(...a); }
   back.onclick = () => { if (hist.length < 2) return; hist.pop(); const [fn, a] = hist[hist.length - 1]; back.classList.toggle('on', hist.length > 1); fn(...a); };
   const say = lines => `<div class="say">${lines.map(l => `<p>${esc(l)}</p>`).join('')}</div>`;
-  const bubble = (lines, nar) => `<div class="bubble ${nar ? 'nar' : ''}">${nar ? '' : `<div class="who">${NAME}</div>`}${lines.map(l => `<p>${esc(l)}</p>`).join('')}</div>`;
+  let SPK = NAME;                                          // 지금 말하는 캐릭터 이름(새 상품이면 그 캐릭터)
+  const bubble = (lines, nar) => `<div class="bubble ${nar ? 'nar' : ''}">${nar ? '' : `<div class="who">${esc(SPK)}</div>`}${lines.map(l => `<p>${esc(l)}</p>`).join('')}</div>`;
 
   /* ---- 0. 가게 첫 화면: 캐릭터마다 다른 사주를 고른다 ----
      live 인 것만 누르면 들어가고, 나머지는 「곧 열려요」(그림·풀이를 만드는 중). 그림은 m/<캐릭터>/key.jpg */
@@ -89,14 +90,14 @@
       ${READERS.some(r => !r.live) ? `<h2 class="sh-t">${esc(S.secSoon)}</h2><p class="sh-ts">${esc(S.soonD)}</p>` : ''}
       <div class="soons">${READERS.filter(r => !r.live).map(r => `<div class="sn"><img src="${r.img}${mv}" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><b>${esc(S.banner[r.id][0])}</b><small>${esc(S.banner[r.id][1])}</small></div>`).join('')}</div>
       ${bizFoot()}</div>`, false, true);
-    ui.querySelectorAll('.bn').forEach(b => b.onclick = () => { const r = READERS.find(x => x.id === b.dataset.r); if (!r.live) { b.classList.add('shake'); setTimeout(() => b.classList.remove('shake'), 500); return; } track('pick_' + r.id); if (BANNER_GO[r.id]) { pxStart(BANNER_GO[r.id]); return; } MODE = 'read'; B.focus = null; go(intro); });
+    ui.querySelectorAll('.bn').forEach(b => b.onclick = () => { const r = READERS.find(x => x.id === b.dataset.r); if (!r.live) { b.classList.add('shake'); setTimeout(() => b.classList.remove('shake'), 500); return; } track('pick_' + r.id); if (BANNER_GO[r.id]) { pxStart(BANNER_GO[r.id]); return; } MODE = 'read'; SPK = NAME; B.focus = null; go(intro); });
     ui.querySelectorAll('#cats button').forEach(b => b.onclick = () => { ui.querySelectorAll('#cats button').forEach(x => x.classList.toggle('sel', x === b)); ui.querySelectorAll('.mn').forEach(m => m.hidden = b.dataset.c !== 'all' && m.dataset.cat !== b.dataset.c); });
     ui.querySelectorAll('.mn').forEach(b => b.onclick = () => {
       const id = b.dataset.id; track('menu_' + id);
       if (b.classList.contains('off')) { b.classList.add('shake'); setTimeout(() => b.classList.remove('shake'), 500); return; }
       if (id === 'manse') { MODE = 'manse'; go(ask, 'who'); return; }
       if (PXM[id]) { pxStart(id); return; }
-      MODE = 'read'; B.focus = id === 'all' ? null : id; go(intro);
+      MODE = 'read'; SPK = NAME; B.focus = id === 'all' ? null : id; go(intro);
     });
     renderAcct(); if (AUTH) syncOwned([]).then(renderAcct);
     const bns = $('#bns'), dots = ui.querySelectorAll('.dots span');
@@ -127,7 +128,7 @@
   const mediaOf = rd => { if (rd === 'haerang') return media('key', true); curMedia = ''; still.src = `m/${rd}/key.jpg?v=${window.CFG.MEDIA_V || 1}`; still.classList.add('kb'); vid.classList.remove('on'); vid.removeAttribute('src'); };
   const freshB = () => Object.assign(B, { name: '', gender: null, cal: 'solar', leap: false, y: 1995, m: 1, d: 1, hh: null, mm: 0, place: I.place0 });
   function pxStart(id) {
-    PXID = id; PEOPLE = []; MODE = 'px'; freshB(); fillMe();
+    PXID = id; PEOPLE = []; MODE = 'px'; freshB(); fillMe(); SPK = PXT(id).nm || NAME;
     track('px_' + id);
     go(PXM[id][2] ? pxAdult : pxIntro);
   }
@@ -142,8 +143,23 @@
     const x = PXT(PXID); mediaOf(PXM[PXID][0]);
     render(`<div class="fold"><p class="pxcat">${esc(x.cat || '')}</p><h1 class="hook">${x.hook}</h1>
       <p class="sub">${esc(x.sub || '')}</p>
-      <button class="btn" id="go">${esc(x.go || t.enter)} · ${esc(I.money(PXPRICE(PXID)))}</button><p class="fine">${t.fine1}</p></div>`);
-    $('#go').onclick = () => { track('px_start'); go(ask, 'who'); };
+      <button class="btn" id="go">${esc(S.go[PXM[PXID][0]] || t.enter)}</button><p class="fine">${t.fine1}</p></div>`);
+    $('#go').onclick = () => { track('px_start'); go(pxScene, 0); };
+  }
+  /* 해랑처럼: 들어가면 캐릭터가 먼저 말을 건다(두 장면) → 입력 */
+  function pxScene(i) {
+    const sc = S.scn[PXM[PXID][0]] || [], s0 = sc[i];
+    if (!s0) return go(ask, 'who');
+    app.classList.remove('blur'); render('');
+    setTimeout(() => {
+      render(bubble(s0.say) + s0.ask.map((a, k) => `<button class="opt" data-k="${k}">${esc(a)}</button>`).join('') + (i === 0 ? `<button class="skip" id="skip">${t.skip}</button>` : ''));
+      ui.querySelectorAll('.opt').forEach(b => b.onclick = () => {
+        const k = +b.dataset.k, nx = () => i + 1 < sc.length ? go(pxScene, i + 1) : go(ask, 'who');
+        if (s0.reply) { render(bubble([s0.reply[k]]) + `<button class="opt" id="nx">${t.cont}</button>`); $('#nx').onclick = nx; return; }
+        nx();
+      });
+      const sk = $('#skip'); if (sk) sk.onclick = () => go(ask, 'who');
+    }, i === 0 ? 900 : 700);
   }
   const PXPRICE = id => ({ kr: [19900, 39000], sg: [1890, 3590], my: [5700, 10800], us: [1399, 2799] }[MK][id === 'classic' ? 1 : 0]);   // 서버 cfg.js PX_PRICE 와 같게
   /* 입력 질문 머리말: 몇 번째 사람인지 */
@@ -193,8 +209,8 @@
   }
   function showPx(f) {
     track('px_full'); mediaOf(f.reader);
-    render(`<div class="result"><section class="sec in">${pxHead(f)}${(f.ch || []).map(pxCard).join('')}
-      ${homeBox()}<button class="opt" id="home">${esc(S.toShop)}</button></section></div>`, true);
+    render(`<div class="result"><section class="sec in">${pxHead(f)}${homeBox()}${(f.ch || []).map(pxCard).join('')}
+      <button class="opt" id="home">${esc(S.toShop)}</button></section></div>`, true);
     bindHome(`${BASE}?r=${RID}&k=${KEY}&src=home`);
     $('#home').onclick = () => { history.replaceState(null, '', BASE); go(shop); };
   }
@@ -561,10 +577,24 @@
   window.addEventListener('appinstalled', () => { track('a2hs_done'); const h = document.getElementById('home'); if (h) h.innerHTML = `<p class="hk">${t.homeDone}</p>`; });
 
   function manifestFor(url) {                       // 홈 아이콘이 이 풀이 주소로 바로 열리게(주소에 열쇠가 들어 있다)
-    const m = { name: t.brand, short_name: t.brand, start_url: url + '&src=home', scope: BASE, display: 'standalone', background_color: '#0b0a10', theme_color: '#0b0a10',
+    const m = { name: t.brand, short_name: t.brand, start_url: BASE + '?src=home', scope: BASE, display: 'standalone', background_color: '#0b0a10', theme_color: '#0b0a10',
       icons: [192, 512].map(z => ({ src: `${BASE}icon-${z}.png`, sizes: `${z}x${z}`, type: 'image/png', purpose: 'any' })) };
     let l = document.querySelector('link[rel=manifest]'); if (!l) { l = document.createElement('link'); l.rel = 'manifest'; document.head.appendChild(l); }
     l.href = URL.createObjectURL(new Blob([JSON.stringify(m)], { type: 'application/manifest+json' }));
+  }
+  /* 아이폰 사파리 「홈 화면에 추가」 그림 안내(수디 shop.js 의 것을 월하당 색으로) — 녹화가 아니라 CSS 애니메이션, 10초에 네 장면 */
+  function iosGuide(v26) {
+    const page = '<div class="gp"><i></i><b><u></u><u></u></b><s></s></div>';
+    const bar = v26
+      ? '<div class="gbar"><span class="gc"></span><span class="gurl"><span class="gring"></span><em>≡</em><span class="gln"></span></span><span class="gc"></span></div><span class="gtap" style="left:27px"></span>'
+      : '<div class="gbar old"><span class="gln" style="flex:0 0 8px"></span><span class="gurl"></span><span class="gdots"><span class="gring"></span><em>⋯</em></span></div><span class="gtap" style="right:9px"></span>';
+    return `<div class="iosg"><div class="gph">
+      <div class="gsc" style="animation-delay:0s">${page}${bar}</div>
+      <div class="gsc" style="animation-delay:2.5s">${page}<div class="gmenu" style="${v26 ? 'left:6px' : 'right:6px'}"><div class="gshare">⇪ ${esc(t.gShare)}</div><i></i><i></i></div></div>
+      <div class="gsc" style="animation-delay:5s"><div class="gsheet"><i class="ghd"></i><i class="gl"></i><i class="gl"></i><div class="gadd">⊞ <span></span></div></div><span class="garrow">↓</span></div>
+      <div class="gsc" style="animation-delay:7.5s"><div class="ghome"><u></u><u></u><u></u><img src="icon-192.png" alt=""><u></u><u></u></div></div>
+    </div><div class="gst"><span class="gbadge">${esc(t.safariOnly)}</span>
+      <ol><li>${v26 ? t.ios26 : t.iosOld}</li>${v26 ? `<li>${t.iosShare}</li>` : ''}<li>${t.iosAdd}</li><li>${t.iosOk}</li></ol></div></div>`;
   }
   function homeBox() {
     if (isStandalone()) return '';
@@ -579,8 +609,7 @@
     }
     else if (iosOther) { how = t.iosOther; btn = `<button class="btn" id="hout">${t.openIn('Safari')}</button><p class="hk">${t.ifNotOpen}</p><button class="opt" id="hcp">${t.copy}</button>`; }
     else if (isIOS) {
-      const v26 = /Version\/(2[6-9]|[3-9]\d)/.test(UA);
-      how = `<ol><li>${v26 ? t.ios26 : t.iosOld}</li>${v26 ? `<li>${t.iosShare}</li>` : ''}<li>${t.iosAdd}</li><li>${t.iosOk}</li></ol>`;
+      how = iosGuide(/Version\/(2[6-9]|[3-9]\d)/.test(UA));
     }
     else { how = t.andHow; btn = `<button class="btn" id="hgo" ${bip ? '' : 'hidden'}>${t.addBtn}</button><p class="hk" id="hman">${bip ? '' : t.andMan}</p>`; }
     return `<div class="homebox" id="home"><div class="hh"><img src="icon-192.png" alt=""><div><b>${t.homeT}</b><span>${t.homeS}</span></div></div>
@@ -644,7 +673,7 @@
     $('#re').onclick = backToPreview;
   }
   else if (/^[a-f0-9]{16}$/.test(qs.get('r') || '')) { if (qs.get('src') === 'home' || isStandalone()) track('home_open'); openFull(qs.get('r'), qs.get('k')); }
-  else if (isStandalone() && (() => { try { return JSON.parse(ls.get('cw_owned') || '[]')[0]; } catch (e) { } })()) { const o = JSON.parse(ls.get('cw_owned'))[0]; track('home_open'); openFull(o.rid, o.key); }
+  else if (isStandalone() || qs.get('src') === 'home') { track('home_open'); fillMe(); go(shop); }
   else if (qs.get('go')) { fillMe(); goDeep(qs.get('go')); }
   else { fillMe(); go(shop); }
 })();

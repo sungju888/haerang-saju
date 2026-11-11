@@ -247,3 +247,39 @@ select,.inp{width:100%;min-height:52px;padding:12px;border-radius:12px;border:1p
 .kakao{width:280px;max-width:100%;height:44px;border:0;border-radius:22px;background:#FEE500;color:#191919;font-weight:700;font-size:15px;cursor:pointer}
 .safe{font-size:12px;line-height:1.55;color:var(--dim);background:rgba(18,15,22,.7);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 12px;margin:12px 0 0}
 .safe a{color:var(--gold);text-decoration:none}
+/* 아이폰 홈 화면 추가 그림 안내(10초 · 네 장면) */
+@keyframes gScene{0%{opacity:0}2%,24%{opacity:1}27%,100%{opacity:0}}
+@keyframes gTap{0%{transform:translate(0,14px);opacity:0}6%,19%{transform:none;opacity:1}23%,100%{opacity:0}}
+@keyframes gRing{0%,6%{transform:scale(.55);opacity:0}13%{transform:scale(1);opacity:.5}21%,100%{transform:scale(1.5);opacity:0}}
+@keyframes gArrow{0%,52%{transform:translateY(-3px);opacity:0}58%{opacity:1}66%{transform:translateY(3px);opacity:1}74%,100%{opacity:0}}
+@keyframes gPop{0%,77%{transform:scale(.4);opacity:0}86%{transform:scale(1.08);opacity:1}91%,100%{transform:scale(1);opacity:1}}
+.iosg{display:flex;gap:14px;align-items:center;margin:10px 0 2px;padding:12px;border-radius:14px;background:rgba(11,10,16,.55);border:1px solid rgba(226,194,122,.25)}
+.gph{position:relative;width:104px;height:170px;flex:0 0 auto;border-radius:16px;background:#1a1720;border:1px solid rgba(255,255,255,.18);overflow:hidden;-webkit-text-size-adjust:none;text-size-adjust:none}
+.gsc{position:absolute;inset:0;opacity:0;animation:gScene 10s infinite backwards}
+.gp{padding:9px 8px}.gp i{display:block;height:6px;width:46px;margin:4px auto 8px;border-radius:3px;background:rgba(226,194,122,.45)}
+.gp b{display:flex;gap:5px}.gp u{flex:1;height:34px;border-radius:6px;background:#2a2533}.gp s{display:block;height:5px;width:66%;margin-top:7px;border-radius:3px;background:#2a2533}
+.gbar{position:absolute;left:0;right:0;bottom:0;height:40px;background:#f2f2f6;display:flex;align-items:center;gap:4px;padding:0 5px}
+.gbar .gc{width:16px;height:16px;border-radius:50%;border:1px solid #dcdce2;background:#fff}
+.gurl{flex:1;height:18px;border-radius:10px;background:#fff;border:1px solid #dcdce2;display:flex;align-items:center;gap:4px;padding:0 4px;position:relative}
+.gbar.old .gurl{height:16px;border:0;background:#e6e6ec}
+.gurl em,.gdots em{position:relative;font:700 11px/1 sans-serif;color:#222;font-style:normal}
+.gln{flex:1;height:4px;border-radius:2px;background:#d4d4da}
+.gdots{position:relative;display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px}
+.gring{position:absolute;left:-3px;width:19px;height:19px;border-radius:50%;background:var(--gold);animation:gRing 10s infinite}
+.gdots .gring{left:-1px}
+.gtap{position:absolute;bottom:8px;width:13px;height:13px;border-radius:50%;background:rgba(226,194,122,.55);animation:gTap 10s infinite}
+.gmenu{position:absolute;bottom:44px;width:74px;background:#fff;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.35);padding:4px}
+.gshare{background:#eef5ff;border-radius:7px;padding:5px 6px;font:700 8px/1 sans-serif;color:#0a84ff}
+.gmenu i{display:block;height:6px;border-radius:3px;background:#eeeef2;margin:6px 6px 0}.gmenu i:last-child{margin-bottom:4px}
+.gsheet{position:absolute;left:0;right:0;top:30px;bottom:0;background:#f2f2f4;border-radius:13px 13px 0 0;padding:8px 7px}
+.gsheet .ghd{display:block;height:4px;width:26px;margin:0 auto 9px;border-radius:2px;background:#d3d3d8}
+.gsheet .gl{display:block;height:7px;border-radius:3px;background:#e1e1e6;margin:0 2px 6px}
+.gadd{display:flex;align-items:center;gap:5px;background:#fff;border:1.5px solid var(--gold2);border-radius:8px;padding:5px 4px;margin:0 1px;font:700 10px/1 sans-serif;color:#222}
+.gadd span{flex:1;height:5px;border-radius:3px;background:var(--gold2)}
+.garrow{position:absolute;left:50%;margin-left:-5px;top:94px;font:700 14px/1 sans-serif;color:var(--gold);animation:gArrow 10s infinite}
+.ghome{height:100%;background:linear-gradient(160deg,#2a2236,#120f18);padding:16px 12px;display:grid;grid-template-columns:repeat(3,1fr);gap:9px;align-content:start}
+.ghome u{height:24px;border-radius:7px;background:rgba(255,255,255,.12)}
+.ghome img{width:100%;height:24px;object-fit:cover;border-radius:7px;animation:gPop 10s infinite;box-shadow:0 0 0 1.5px var(--gold)}
+.gst{flex:1;min-width:0;font-size:12.5px;line-height:1.6}
+.gst ol{margin:4px 0 0;padding-left:18px}
+.gbadge{display:inline-block;padding:3px 9px;border-radius:999px;background:var(--gold);color:#1d1405;font-weight:700;font-size:10.5px}

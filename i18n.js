@@ -84,7 +84,7 @@
       ios26: '주소창 왼쪽 <b>≡</b> 누르기 <span class="hk">(옛 모양이면 아래쪽 <b>⋯</b>)</span>', iosOld: '아래쪽 <b>공유</b> 버튼(네모에 ↑) <span class="hk">(안 보이면 오른쪽 아래 <b>⋯</b> → 공유)</span>',
       iosShare: '<b>공유</b> 누르기', iosAdd: '목록을 아래로 내려 <b>「홈 화면에 추가」</b>', iosOk: '오른쪽 위 <b>추가</b>',
       andHow: '버튼 한 번이면 앱처럼 홈 화면에 생겨.', addBtn: '홈 화면에 추가', andMan: '버튼이 안 보이면: 오른쪽 위 <b>⋮</b> → <b>「홈 화면에 추가」</b> (삼성 인터넷은 <b>≡</b> → <b>「현재 페이지 추가」</b>)',
-      homeT: '홈 화면에 해랑사주 두기', homeS: '앱처럼 바로 열리고, 산 풀이가 그대로 붙어 있어.', copyOnly: '풀이 링크만 복사', copied: '복사했어 ✓', promptCopy: '이 주소를 복사해 둬',
+      homeT: '홈 화면에 월하당 두기', homeS: '앱처럼 바로 열리고, 산 풀이는 보관함에 그대로 있어.', safariOnly: '사파리에서만 돼요 · 크롬은 안 돼요', gShare: '공유', copyOnly: '풀이 링크만 복사', copied: '복사했어 ✓', promptCopy: '이 주소를 복사해 둬',
       biz: () => `판매자 ${SELLER.name}(말레이시아 법인) · 대표 조성주 · 등록번호 ${SELLER.reg}<br>${SELLER.addr}<br>고객센터 ${SELLER.mail} · ${SELLER.tel}<br><a href="terms.html">이용약관</a> · <a href="refund.html">환불 정책</a> · <a href="privacy.html">개인정보처리방침</a>`,
       refundHref: 'refund.html',
     },
@@ -148,7 +148,7 @@
       ios26: 'Tap <b>≡</b> left of the address bar <span class="hk">(older look: <b>⋯</b> at the bottom)</span>', iosOld: 'Tap <b>Share</b> at the bottom (square with ↑) <span class="hk">(not there? <b>⋯</b> bottom right → Share)</span>',
       iosShare: 'Tap <b>Share</b>', iosAdd: 'Scroll down to <b>"Add to Home Screen"</b>', iosOk: 'Tap <b>Add</b> top right',
       andHow: 'One tap and it sits on your home screen like an app.', addBtn: 'Add to home screen', andMan: 'No button? Tap <b>⋮</b> top right → <b>"Add to Home screen"</b> (Samsung Internet: <b>≡</b> → <b>"Add page to"</b>)',
-      homeT: 'Put Haerang on your home screen', homeS: 'Opens like an app, with your reading inside.', copyOnly: 'Just copy the link', copied: 'Copied ✓', promptCopy: 'Copy this link',
+      homeT: 'Put Moonlit Hall on your home screen', homeS: 'Opens like an app — your readings stay in My readings.', safariOnly: 'Safari only · not Chrome', gShare: 'Share', copyOnly: 'Just copy the link', copied: 'Copied ✓', promptCopy: 'Copy this link',
       biz: () => `Sold by ${SELLER.name} · Reg. ${SELLER.reg}<br>${SELLER.addr}<br>${SELLER.mail}<br><a href="terms-en.html">Terms</a> · <a href="refund-en.html">Refund policy</a> · <a href="privacy-en.html">Privacy</a>`,
       refundHref: 'refund-en.html',
     },
@@ -212,7 +212,7 @@
       ios26: '点地址栏左边的<b>≡</b> <span class="hk">（旧版是底部的<b>⋯</b>）</span>', iosOld: '点底部的<b>分享</b>（方框加↑）<span class="hk">（没有的话：右下<b>⋯</b> → 分享）</span>',
       iosShare: '点<b>分享</b>', iosAdd: '往下滑，点<b>「添加到主屏幕」</b>', iosOk: '点右上角<b>添加</b>',
       andHow: '一键就能像应用一样出现在主屏幕。', addBtn: '添加到主屏幕', andMan: '没看到按钮：右上角<b>⋮</b> → <b>「添加到主屏幕」</b>（三星浏览器：<b>≡</b> → <b>「添加页面至」</b>）',
-      homeT: '把海朗八字放到主屏幕', homeS: '像应用一样直接打开，买的解读都在里面。', copyOnly: '只复制链接', copied: '已复制 ✓', promptCopy: '请复制这个链接',
+      homeT: '把月下堂放到主屏幕', homeS: '像应用一样直接打开，买的解读都在「我的解读」里。', safariOnly: '只能用 Safari · Chrome 不行', gShare: '分享', copyOnly: '只复制链接', copied: '已复制 ✓', promptCopy: '请复制这个链接',
       biz: () => `销售方 ${SELLER.name} · 注册号 ${SELLER.reg}<br>${SELLER.addr}<br>${SELLER.mail}<br><a href="terms-en.html">条款</a> · <a href="refund-en.html">退款政策</a> · <a href="privacy-en.html">隐私政策</a>`,
       refundHref: 'refund-en.html',
     },
@@ -387,6 +387,64 @@
       zodiac: { cat: '星座运势 · 瑟琳', nm: '瑟琳', hook: '"你出生的那一刻，<br>星空是这样的。"', sub: '太阳·月亮·上升，金星·火星，还有明年的木星。知道出生时间会更准。', who: ['你叫什么名字？'], wait: '正在展开那晚的星空…' },
     },
   });
+  /* 새 상품도 해랑처럼: 첫 화면(값 없이) → 캐릭터와 짧은 인사 두 번 → 입력 */
+  T.ko.S.go = { haerang: '신당 들어가기', seoha: '서재로 들어가기', yeonji: '달빛 정원으로', selene: '천문대로 올라가기' };
+  T.en.S.go = { haerang: 'Step inside', seoha: 'Enter the study', yeonji: 'Into the moonlit garden', selene: 'Up to the observatory' };
+  T.zh.S.go = { haerang: '进入神堂', seoha: '走进书房', yeonji: '去月光庭园', selene: '登上天文台' };
+  T.ko.S.scn = {
+    haerang: [
+      { say: ['…또 왔네?', '이번엔 뭐가 궁금해서.'], ask: ['좀 깊은 얘기예요.', '그냥 봐 주세요.'], reply: ['깊은 얘기 좋지. 돌려 말 안 할게.', '그래, 보이는 대로 말해 줄게.'] },
+      { say: ['생일만 줘.', '나머진 내가 알아서 읽어.'], ask: ['네, 알려 드릴게요'] },
+    ],
+    seoha: [
+      { say: ['어서 오세요. 서하예요.', '앉으세요. 차 한 잔 드릴까요?'], ask: ['감사합니다.', '바로 여쭤봐도 될까요?'], reply: ['편하게 계세요. 서두를 것 없어요.', '그럼요. 그러려고 오신 거니까요.'] },
+      { say: ['명리는 태어난 순간의 여덟 글자로 읽어요.', '생년월일과 태어난 시각을 알려 주시면, 원칙대로 한 글자씩 짚어 드릴게요.'], ask: ['네, 알려 드릴게요'] },
+    ],
+    yeonji: [
+      { say: ['어머, 손님이다!', '나 연지야. 사람 사이 붉은 실 보는 사람.'], ask: ['붉은 실이요?', '안녕하세요!'], reply: ['응, 인연이 있는 사람끼리는 새끼손가락에 실이 이어져 있거든.', '반가워! 표정 보니까 누구 생각하고 왔지?'] },
+      { say: ['자, 생일만 알려 줘.', '실이 어디로 이어져 있는지 내가 따라가 볼게.'], ask: ['좋아요'] },
+    ],
+    selene: [
+      { say: ['왔구나. 오늘 밤하늘 맑지?', '난 셀린. 별을 읽어.'], ask: ['별을요?', '안녕하세요.'], reply: ['응. 네가 태어난 순간 하늘에 해·달·별이 어디 있었는지가 너를 말해 줘.', '반가워. 천천히 봐 줄게.'] },
+      { say: ['태어난 날짜랑 시간, 장소만 알려 줘.', '그날 밤하늘을 그대로 펼쳐 볼게.'], ask: ['알려 줄게요'] },
+    ],
+  };
+  T.en.S.scn = {
+    haerang: [
+      { say: ['…back again?', 'What brings you this time?'], ask: ["It's something deeper.", 'Just read me.'], reply: ["Deep's good. I won't sugar-coat it.", "Sure. I'll say what I see."] },
+      { say: ['Just give me your birthday.', "I'll read the rest."], ask: ['Okay'] },
+    ],
+    seoha: [
+      { say: ["Welcome. I'm Seoha.", 'Please, sit. Some tea?'], ask: ['Thank you.', 'May I ask right away?'], reply: ["Make yourself comfortable. There's no rush.", "Of course. That's why you came."] },
+      { say: ['Saju is read from the eight characters of the moment you were born.', "Tell me your birth date and time, and I'll go through them one by one, by the old rules."], ask: ["I'll tell you"] },
+    ],
+    yeonji: [
+      { say: ['Oh, a visitor!', "I'm Yeonji. I see the red threads between people."], ask: ['Red threads?', 'Hi!'], reply: ["Mm-hm. People who are meant to meet are tied by a thread on their little finger.", "Hi! I can tell you came here thinking about someone."] },
+      { say: ['Okay, just your birthdays.', "I'll follow where the thread goes."], ask: ['Sounds good'] },
+    ],
+    selene: [
+      { say: ["There you are. Clear sky tonight, isn't it?", "I'm Selene. I read the stars."], ask: ['The stars?', 'Hello.'], reply: ["Yes. Where the Sun, Moon and planets stood the moment you were born says a lot about you.", "Nice to meet you. Let's take our time."] },
+      { say: ['Tell me your birth date, time and place.', "I'll unroll that night's sky for you."], ask: ['Okay'] },
+    ],
+  };
+  T.zh.S.scn = {
+    haerang: [
+      { say: ['…又来了？', '这次想问什么？'], ask: ['有点深的事。', '帮我看看就好。'], reply: ['深的好，我不绕弯子。', '好，我看到什么说什么。'] },
+      { say: ['把生日给我就行。', '剩下的我来读。'], ask: ['好的'] },
+    ],
+    seoha: [
+      { say: ['欢迎，我是瑞夏。', '请坐，要喝杯茶吗？'], ask: ['谢谢。', '可以直接请教吗？'], reply: ['请放松，不用着急。', '当然，您就是为此而来的。'] },
+      { say: ['命理是用出生那一刻的八个字来读的。', '告诉我您的出生日期和时间，我按规矩一字一字为您解读。'], ask: ['好，我告诉您'] },
+    ],
+    yeonji: [
+      { say: ['哎呀，来客人了！', '我是胭脂，专看人和人之间的红线。'], ask: ['红线？', '你好！'], reply: ['嗯，有缘的人小指上都系着一根线哦。', '你好！看你的表情，是想着谁来的吧？'] },
+      { say: ['好啦，告诉我生日就行。', '我顺着红线帮你找。'], ask: ['好'] },
+    ],
+    selene: [
+      { say: ['你来啦。今晚星空很清吧？', '我是瑟琳，读星星的人。'], ask: ['读星星？', '你好。'], reply: ['嗯，你出生那一刻太阳、月亮和行星的位置，会说出你是谁。', '很高兴见到你，我们慢慢看。'] },
+      { say: ['告诉我出生日期、时间和地点。', '我把那晚的星空展开给你看。'], ask: ['好'] },
+    ],
+  };
   window.I18N = { LG, MK, t: T[LG], money, FROM, MO, josa, places: MK === 'kr' ? PLACES.kr : MK === 'us' ? PLACES.us : PLACES.sg[LG], place0: MK === 'kr' ? 'seoul' : MK === 'my' ? 'kl' : MK === 'sg' ? 'singapore' : ({ 'America/Chicago': 'chicago', 'America/Denver': 'denver', 'America/Phoenix': 'phoenix', 'America/Los_Angeles': 'los_angeles', 'America/Anchorage': 'anchorage', 'Pacific/Honolulu': 'honolulu', 'America/Toronto': 'toronto', 'America/Vancouver': 'vancouver', 'Europe/London': 'london', 'Australia/Sydney': 'sydney', 'Australia/Melbourne': 'sydney' }[TZ] || 'new_york'), cur: CUR };
   if (LG === 'zh') { const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@700&display=swap'; document.head.appendChild(l); }
   document.title = { ko: '월하당 — 사주·궁합·별자리, 캐릭터마다 다른 풀이', en: 'Moonlit Hall — saju, compatibility & astrology readings', zh: '月下堂 — 八字·合盘·星座解读' }[LG];
