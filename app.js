@@ -69,8 +69,14 @@
     { id: 'selene', live: PX_LIVE.includes('zodiac'), img: 'm/selene/key.jpg' },
   ];
   let MODE = 'read';                       // 'read' = 해랑 풀이, 'manse' = 무료 만세력
+  /* 마지막으로 본 캐릭터(광고로 들어온 캐릭터 포함)를 기억해 가게에서 맨 앞에 세운다 */
+  const lastRd = () => ls.get('cw_rd') || 'haerang';
+  const setRd = r => r && ls.set('cw_rd', r);
   function shop() {
     track('shop');
+    const first = lastRd();
+    const RD = [...READERS].sort((a, b) => (b.id === first) - (a.id === first));
+    const MENU = [...S.menu].sort((a, b) => (b[5] === first) - (a[5] === first));
     const mv = '?v=' + (window.CFG.MEDIA_V || 1);
     const owned = (() => { try { return JSON.parse(ls.get('cw_owned') || '[]'); } catch (e) { return []; } })();
     const banner = r => { const [cat, nm, line] = S.banner[r.id]; return `<button class="bn ${r.live ? '' : 'off'}" data-r="${r.id}">
@@ -79,11 +85,11 @@
         <i>${r.live ? esc(S.open) + ' ›' : esc(S.soon)}</i></span></button>`; };
     render(`<div class="shopw">
       <h1 class="sh-h">${esc(S.hi)}</h1><p class="sh-s">${esc(S.hiSub)}</p>
-      <div class="bns" id="bns">${READERS.map(banner).join('')}</div>
+      <div class="bns" id="bns">${RD.map(banner).join('')}</div>
       <div class="dots">${READERS.map((r, i) => `<span class="${i ? '' : 'on'}"></span>`).join('')}</div>
       <h2 class="sh-t">${esc(S.secTopic)}</h2><p class="sh-ts">${esc(S.secTopicSub)}</p>
       <div class="cats" id="cats">${S.cats.map(([k, n], i) => `<button data-c="${k}" class="${i ? '' : 'sel'}">${esc(n)}</button>`).join('')}</div>
-      <div class="menu" id="menu">${S.menu.map(([id, cat, ic, nm, d, rd, live]) => { const on = live !== 0 || PX_LIVE.includes(id); return `<button class="mn ${on ? '' : 'off'}" data-id="${id}" data-cat="${cat}">
+      <div class="menu" id="menu">${MENU.map(([id, cat, ic, nm, d, rd, live]) => { const on = live !== 0 || PX_LIVE.includes(id); return `<button class="mn ${on ? '' : 'off'}" data-id="${id}" data-cat="${cat}">
         <span class="mn-i">${rd !== 'free' ? `<img src="m/${rd}/key.jpg${mv}" alt="" loading="lazy" onerror="this.remove()">` : ''}<span>${ic}</span></span>
         <span class="mn-t"><b>${esc(nm)}</b><small>${esc(d)}</small><em>${rd === 'free' ? esc(S.free) : !on ? esc(S.soon) : PXM[id] ? esc(I.money(PXPRICE(id))) : esc(S.from(I.money(I.FROM)))}</em></span></button>`; }).join('')}</div>
       ${owned.length || canLogin() || AUTH ? `<h2 class="sh-t">${esc(S.secMine)}</h2><p class="sh-ts">${esc(S.mineD)}</p><div id="acct"></div>` : ''}
@@ -128,7 +134,7 @@
   const mediaOf = rd => { if (rd === 'haerang') return media('key', true); curMedia = ''; still.src = `m/${rd}/key.jpg?v=${window.CFG.MEDIA_V || 1}`; still.classList.add('kb'); vid.classList.remove('on'); vid.removeAttribute('src'); };
   const freshB = () => Object.assign(B, { name: '', gender: null, cal: 'solar', leap: false, y: 1995, m: 1, d: 1, hh: null, mm: 0, place: I.place0 });
   function pxStart(id) {
-    PXID = id; PEOPLE = []; MODE = 'px'; freshB(); fillMe(); SPK = PXT(id).nm || NAME;
+    setRd(PXM[id][0]); PXID = id; PEOPLE = []; MODE = 'px'; freshB(); fillMe(); SPK = PXT(id).nm || NAME;
     track('px_' + id);
     go(PXM[id][2] ? pxAdult : pxIntro);
   }
@@ -280,6 +286,7 @@
 
   /* ---- 1. 첫 화면 ---- */
   function intro() {
+    setRd('haerang');
     media('key', true); preload('s1_enter');
     render(`<div class="fold"><h1 class="hook">${t.hook}</h1>
       <p class="sub">${t.sub(I.money(I.FROM))}</p>
