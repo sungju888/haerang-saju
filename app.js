@@ -59,7 +59,7 @@
      live 인 것만 누르면 들어가고, 나머지는 「곧 열려요」(그림·풀이를 만드는 중). 그림은 m/<캐릭터>/key.jpg */
   const S = t.S;
   /* 풀이가 다 만들어진 새 상품(서버 px/index.js 에 등록된 것). 여기 넣으면 「곧 열려요」가 풀린다 */
-  const PX_LIVE = ['couple', 'zodiac'];
+  const PX_LIVE = ['couple', 'zodiac', 'reunion', 'marry', 'some'];
   const BANNER_GO = { seoha: 'classic', yeonji: 'couple', selene: 'zodiac' };
   const READERS = [
     { id: 'haerang', live: true, img: 'm/haerang/key.jpg' },
