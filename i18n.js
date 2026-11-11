@@ -19,7 +19,7 @@
   const money = (n, cur) => { const c = cur || CUR; return c === 'KRW' ? (LG === 'ko' ? n.toLocaleString('ko-KR') + '원' : '₩' + n.toLocaleString('en-US')) : ({ SGD: 'S$', MYR: 'RM', USD: '$' }[c] || c + ' ') + (n % 100 ? (n / 100).toFixed(2) : String(n / 100)); };
   const FROM = { kr: 6900, sg: 690, my: 2100, us: 499 }[MK];   // 「…부터」(cfg.js 의 one 값과 맞춘다)
   /* 결제 수단 안내(히트페이가 통화마다 실제로 띄우는 것) */
-  const PM = { kr: 'KakaoPay · Naver Pay · PAYCO · Card', sg: 'PayNow · Card · Google Pay', my: 'FPX · DuitNow · Touch \'n Go · GrabPay · ShopeePay · Alipay+ · Card', us: 'Card · Apple Pay · Google Pay' }[MK];
+  const PM = { kr: 'KakaoPay · Naver Pay · PAYCO · Card', sg: 'PayNow · Card · Google Pay', my: 'Touch \'n Go · DuitNow · FPX · GrabPay · ShopeePay · Alipay+ · WeChat Pay · Atome · Card', us: 'Card · Google Pay' }[MK];
 
   const SELLER = { name: 'SOODY SDN. BHD.', reg: '202601029138 (1691233-P)', addr: '21-05 Jazz Suites, Jalan Seri Tanjung Pinang, 10470 Tanjung Tokong, Penang, Malaysia', mail: 'contact@soody.date', tel: '010-7224-4668' };
 
