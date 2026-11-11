@@ -105,7 +105,7 @@
     render(`<div class="result"><section class="sec in"><h2 class="q">${esc(S.manseH(p.name))}</h2>
       ${wonguk(p)}<div class="bubble"><div class="who">${NAME}</div><p>${esc(S.manseNote)}</p></div>
       <button class="btn" id="hr">${esc(S.manseCta)}</button><button class="opt" id="ag">${esc(S.manseAgain)}</button>
-      ${bizFoot()}</section></div>`, true);
+      </section></div>`, true);
     $('#hr').onclick = () => { track('manse_to_read'); MODE = 'read'; go(result); };
     $('#ag').onclick = () => { MODE = 'manse'; go(ask, 'date'); };
   }
@@ -116,7 +116,7 @@
     render(`<div class="fold"><h1 class="hook">${t.hook}</h1>
       <p class="sub">${t.sub(I.money(I.FROM))}</p>
       <button class="btn" id="go">${t.enter}</button>
-      <p class="fine">${t.fine1}</p></div>${bizFoot()}`);   // 회사 정보는 첫 화면 아래(스크롤하면 보임)
+      <p class="fine">${t.fine1}</p></div>`);   // 회사 정보는 가게 첫 화면에만
     $('#go').onclick = () => { track('start'); go(scene, 0); };
   }
 
@@ -271,7 +271,6 @@
         ${say([t.whole])}
         ${tierCards(OFFERS.filter(o => o.id !== 'one'), p.focusKo, 'all')}
         <p class="fine">${t.payFine}</p>
-        ${bizFoot()}
       </section>
     </div>`, true);
     const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); if (e.target.dataset.m) media(e.target.dataset.m, true); } }), { root: ui, threshold: 0.25 });
@@ -386,7 +385,6 @@
         ${f.ch.map((c, i) => [c, i]).sort((x, y) => (x[0].locked ? 1 : 0) - (y[0].locked ? 1 : 0)).map(([c, i]) => chapter(c, i)).join('')}
         ${left.length ? `${say([t.more])}${tierCards(left, f.focusKo, left.find(o => o.id === 'all') ? 'all' : left[0].id)}` : ''}
         <button class="opt" id="again">${t.again}</button>
-        ${bizFoot()}
       </section></div>`, true);
     if (left.length) track('upsell_view');
     bindBuy();

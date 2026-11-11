@@ -6,15 +6,20 @@
   const nav = ((navigator.languages && navigator.languages[0]) || navigator.language || 'en').toLowerCase();
   const pick = l => ['ko', 'en', 'zh'].includes(l) ? l : null;
   const LG = pick(qs.get('lang')) || pick(ls('cw_lang')) || (nav.startsWith('ko') ? 'ko' : nav.startsWith('zh') ? 'zh' : 'en');
-  const MK = ['kr', 'sg'].includes(qs.get('mk')) ? qs.get('mk') : (LG === 'ko' ? 'kr' : 'sg');
+  /* 나라(시장): 한국어면 kr, 아니면 폰 시간대로 — 싱가포르 sg · 말레이시아 my · 그 밖(미국·영어권 등) us(미국 달러) */
+  const TZ = (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { return ''; } })();
+  const MK = ['kr', 'sg', 'my', 'us'].includes(qs.get('mk')) ? qs.get('mk') : LG === 'ko' ? 'kr' : TZ === 'Asia/Singapore' ? 'sg' : /^Asia\/(Kuala_Lumpur|Kuching)$/.test(TZ) ? 'my' : 'us';
+  const CUR = { kr: 'KRW', sg: 'SGD', my: 'MYR', us: 'USD' }[MK];
   try { if (qs.get('lang')) localStorage.setItem('cw_lang', LG); } catch (e) { }
   document.documentElement.lang = LG === 'zh' ? 'zh-Hans' : LG;
 
   const MO = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const josa = (w, a, b) => { const c = String(w).charCodeAt(String(w).length - 1) - 0xac00; return w + (c >= 0 && c <= 11171 && c % 28 ? a : b); };
   const pad = x => String(x).padStart(2, '0');
-  const money = (n, cur) => (cur || (MK === 'sg' ? 'SGD' : 'KRW')) === 'SGD' ? 'S$' + (n / 100).toFixed(2) : (LG === 'ko' ? n.toLocaleString('ko-KR') + '원' : '₩' + n.toLocaleString('en-US'));
-  const FROM = MK === 'sg' ? 690 : 6900;   // 첫 화면 「…부터」(cfg.js 의 one 값과 맞춘다)
+  const money = (n, cur) => { const c = cur || CUR; return c === 'KRW' ? (LG === 'ko' ? n.toLocaleString('ko-KR') + '원' : '₩' + n.toLocaleString('en-US')) : ({ SGD: 'S$', MYR: 'RM', USD: '$' }[c] || c + ' ') + (n % 100 ? (n / 100).toFixed(2) : String(n / 100)); };
+  const FROM = { kr: 6900, sg: 690, my: 2100, us: 499 }[MK];   // 「…부터」(cfg.js 의 one 값과 맞춘다)
+  /* 결제 수단 안내(히트페이가 통화마다 실제로 띄우는 것) */
+  const PM = { kr: 'KakaoPay · Naver Pay · PAYCO · Card', sg: 'PayNow · Card · Google Pay', my: 'FPX · DuitNow · Touch \'n Go · GrabPay · ShopeePay · Alipay+ · Card', us: 'Card · Apple Pay · Google Pay' }[MK];
 
   const SELLER = { name: 'SOODY SDN. BHD.', reg: '202601029138 (1691233-P)', addr: '21-05 Jazz Suites, Jalan Seri Tanjung Pinang, 10470 Tanjung Tokong, Penang, Malaysia', mail: 'contact@soody.date', tel: '010-7224-4668' };
 
@@ -36,7 +41,7 @@
       noDay: (m, d) => `${m}월에는 ${d}일이 없어.`, lunar30: '음력은 30일까지야.',
       qTime: '몇 시에 태어났어?', qsTime: '시주는 그 두 시간 안에서 갈려. 대충이라도 알면 넣어.',
       hh: x => (x < 12 ? '오전 ' : '오후 ') + (x % 12 === 0 ? 12 : x % 12) + '시', mm: x => pad(x) + '분',
-      otherPlace: '다른 곳에서 태어났어요 ›', placeL: '태어난 곳: ', placeNote: MK === 'sg' ? '태어난 곳 경도로 진태양시를 맞춰.' : '태어난 곳 경도로 진태양시를 맞춰(서울은 표준시보다 약 32분 늦어).', noTime: '시간은 몰라',
+      otherPlace: '다른 곳에서 태어났어요 ›', placeL: '태어난 곳: ', placeNote: MK !== 'kr' ? '태어난 곳 경도로 진태양시를 맞춰.' : '태어난 곳 경도로 진태양시를 맞춰(서울은 표준시보다 약 32분 늦어).', noTime: '시간은 몰라',
       hmm: '흠…', inkErr: '먹이 번졌어. 다시 해 보자.', retry: '다시 하기', netErr: '잠깐 연결이 안 됐어.',
       timeUnknown: '시간<br>모름',
       meta: (p, y, m, d) => `양력 ${y}.${m}.${d} · 음력 ${p.lunar.replace(/-/g, '.')} · ${p.tti}띠${p.lmt ? ` · 진태양시 ${p.lmt}` : ''}`,
@@ -53,7 +58,7 @@
       pickQ: p => ['그래서, 네가 지금 제일 궁금한 게 뭐야?', `하나만 골라. 그건 ${p}에 깊게 봐 줄게.`],
       PICKS: [['love', '연애·사람', '내 연애 패턴, 끌리는 사람과 꼬이는 지점'], ['money', '돈·일', '돈이 모이는 구조와 새는 구멍'], ['self', '나 자신', '타고난 본성과 숨은 무기'], ['next', '앞으로 뭐가 올지', '내년 열두 달, 달마다 할 일']],
       whole: '아예 통째로 보고 싶으면 이것도 있어.',
-      payFine: MK === 'sg' ? '한 번 결제 · 구독 아님 · PayNow · 카드' : '한 번 결제 · 구독 아님 · 카카오페이 · 네이버페이 · PAYCO',
+      payFine: MK === 'kr' ? '한 번 결제 · 구독 아님 · 카카오페이 · 네이버페이 · PAYCO · 카드' : '한 번 결제 · 구독 아님 · ' + PM,
       TIER: {
         one: ['가장 가볍게', f => [`지금 고른 고민${f ? `(${f})` : ''} 한 장만 깊게`, '링크로 언제든 다시 보기']],
         love: ['주제별', () => ['그 사람을 만나는 곳·놓치는 이유', '내년 인연이 움직이는 달', '타고난 연애 패턴 + 내년 열두 달']],
@@ -64,7 +69,7 @@
       payT: '풀이 결제', close: '닫기', loadingPM: '결제 수단 불러오는 중…',
       refundNote: '결제하면 풀이가 바로 열리는 디지털 콘텐츠라, 열린 뒤에는 청약철회가 제한돼요. 풀이가 안 열리면 환불해 드려요.', refundL: '환불 정책',
       payBtn: p => `${p} 결제하기`, goPay: p => `${p} 결제하러 가기`, testBar: '테스트 모드 — 실제 돈이 나가지 않아요',
-      openErr: '결제창을 못 열었어. 잠시 뒤 다시 해 줘.', sdkErr: '결제 모듈을 못 불러왔어.', payMethods: MK === 'sg' ? 'PayNow · 카드' : '카카오페이 · 네이버페이 · PAYCO',
+      openErr: '결제창을 못 열었어. 잠시 뒤 다시 해 줘.', sdkErr: '결제 모듈을 못 불러왔어.', payMethods: MK === 'kr' && LG === 'ko' ? '카카오페이 · 네이버페이 · PAYCO · 카드' : PM,
       checking: '결제 확인하는 중이야. 잠깐만.', notConfirmed: '결제 확인이 안 됐어.', ifCharged: '돈이 빠져나갔는데 이 화면이 보이면, 아래 문의처로 주문번호를 보내 줘.', orderNo: '주문번호', backPrev: '맛보기로 돌아가기',
       cancelled: '결제를 취소했네. 괜찮아, 맛보기는 그대로 있어.', payFail: '결제가 안 됐어.',
       pulling: '풀이 꺼내는 중…', unpaid: '아직 결제가 안 된 풀이야.', notFound: '풀이를 못 찾았어.', home: '처음으로',
@@ -100,7 +105,7 @@
       noDay: (m, d) => `${MO[m - 1]} doesn't have a ${d}th.`, lunar30: 'Lunar months only go up to 30.',
       qTime: 'What time were you born?', qsTime: 'The hour pillar changes every two hours. A rough time is fine.',
       hh: x => (x % 12 === 0 ? 12 : x % 12) + (x < 12 ? ' AM' : ' PM'), mm: x => ':' + pad(x),
-      otherPlace: 'Born outside Singapore / Malaysia? ›', placeL: 'Born in: ', placeNote: "I correct for true solar time using your birthplace's longitude (Singapore runs about 65 minutes behind clock time).", noTime: "I don't know the time",
+      otherPlace: MK === 'us' ? 'Born somewhere else? ›' : 'Born outside Singapore / Malaysia? ›', placeL: 'Born in: ', placeNote: "I correct for true solar time (and daylight saving) using your birthplace.", noTime: "I don't know the time",
       hmm: 'Hmm…', inkErr: 'The ink smudged. Let\'s try again.', retry: 'Try again', netErr: 'Connection hiccup.',
       timeUnknown: 'Time<br>unknown',
       meta: (p, y, m, d) => `Solar ${d} ${MO[m - 1]} ${y} · Lunar ${p.lunar} · ${p.tti}${p.lmt ? ` · True solar time ${p.lmt}` : ''}`,
@@ -117,7 +122,7 @@
       pickQ: p => ['So — what do you most want to know right now?', `Pick just one. I'll read it deeply for ${p}.`],
       PICKS: [['love', 'Love & people', 'Your love pattern, who you fall for, where it tangles'], ['money', 'Money & work', 'How your money builds and where it leaks'], ['self', 'Myself', 'Your nature and hidden weapon'], ['next', "What's coming", 'Next year month by month — what to do when']],
       whole: 'Want the whole thing? There\'s this too.',
-      payFine: MK === 'sg' ? 'One-time payment · Not a subscription · PayNow · Cards' : 'One-time payment · Not a subscription · KakaoPay · Naver Pay · PAYCO',
+      payFine: 'One-time payment · Not a subscription · ' + PM,
       TIER: {
         one: ['Lightest', f => [`One deep chapter on what you picked${f ? ` (${f})` : ''}`, 'Reopen anytime with your link']],
         love: ['By topic', () => ['Where you meet them · why you lose them', 'The months love moves next year', 'Your love pattern + next year month by month']],
@@ -128,7 +133,7 @@
       payT: 'Checkout', close: 'Close', loadingPM: 'Loading…',
       refundNote: "This is digital content that opens the moment you pay, so it can't be cancelled once opened. If it doesn't open, we'll refund you.", refundL: 'Refund policy',
       payBtn: p => `Pay ${p}`, goPay: p => `Pay ${p}`, testBar: 'Test mode — no real money is charged',
-      openErr: "Couldn't open checkout. Try again in a moment.", sdkErr: "Couldn't load the payment module.", payMethods: MK === 'sg' ? 'PayNow · Cards' : 'KakaoPay · Naver Pay · PAYCO',
+      openErr: "Couldn't open checkout. Try again in a moment.", sdkErr: "Couldn't load the payment module.", payMethods: MK === 'kr' && LG === 'ko' ? '카카오페이 · 네이버페이 · PAYCO · 카드' : PM,
       checking: 'Checking your payment. One sec.', notConfirmed: "Your payment isn't confirmed.", ifCharged: 'If you were charged and still see this, email us the order number below.', orderNo: 'Order no.', backPrev: 'Back to preview',
       cancelled: "You cancelled. That's fine — your preview is still here.", payFail: "Payment didn't go through.",
       pulling: 'Pulling out your reading…', unpaid: "This reading isn't paid yet.", notFound: "Couldn't find your reading.", home: 'Start over',
@@ -164,7 +169,7 @@
       noDay: (m, d) => `${m}月没有${d}日。`, lunar30: '农历最多到30日。',
       qTime: '几点出生的？', qsTime: '时柱每两个小时一换，大概知道也好。',
       hh: x => (x < 12 ? '上午' : '下午') + (x % 12 === 0 ? 12 : x % 12) + '点', mm: x => pad(x) + '分',
-      otherPlace: '不是在新马出生？›', placeL: '出生地：', placeNote: '按出生地经度换算真太阳时（新加坡比钟表时间慢约65分钟）。', noTime: '不知道时间',
+      otherPlace: MK === 'us' ? '在别处出生？›' : '不是在新马出生？›', placeL: '出生地：', placeNote: '按出生地经度换算真太阳时（含夏令时）。', noTime: '不知道时间',
       hmm: '嗯……', inkErr: '墨晕开了，再来一次。', retry: '重来', netErr: '连接出了点问题。',
       timeUnknown: '时间<br>不详',
       meta: (p, y, m, d) => `阳历 ${y}.${m}.${d} · 农历 ${p.lunar.replace(/-/g, '.')} · 属${p.tti}${p.lmt ? ` · 真太阳时 ${p.lmt}` : ''}`,
@@ -181,7 +186,7 @@
       pickQ: p => ['所以，你现在最想知道的是什么？', `只选一个，${p}帮你深入看。`],
       PICKS: [['love', '感情·人际', '你的恋爱模式、会被谁吸引、卡在哪里'], ['money', '财运·事业', '钱怎么聚、哪里漏'], ['self', '我自己', '天生本性与隐藏的武器'], ['next', '接下来会发生什么', '明年十二个月，每月该做什么']],
       whole: '想一次看全部？还有这个。',
-      payFine: MK === 'sg' ? '一次性付款 · 非订阅 · PayNow · 银行卡' : '一次性付款 · 非订阅 · KakaoPay · Naver Pay · PAYCO',
+      payFine: '一次性付款 · 非订阅 · ' + PM,
       TIER: {
         one: ['最轻松', f => [`只深入看你选的那一项${f ? `（${f}）` : ''}`, '凭链接随时再看']],
         love: ['按主题', () => ['在哪遇见那个人 · 为何错过', '明年姻缘活跃的月份', '天生恋爱模式 + 明年十二个月']],
@@ -192,7 +197,7 @@
       payT: '付款', close: '关闭', loadingPM: '加载中…',
       refundNote: '付款后解读立即开启，属于数字内容，开启后不可撤销。若解读没有开启，我们会退款。', refundL: '退款政策',
       payBtn: p => `支付${p}`, goPay: p => `支付${p}`, testBar: '测试模式 — 不会真正扣款',
-      openErr: '无法打开付款页面，请稍后再试。', sdkErr: '付款模块加载失败。', payMethods: MK === 'sg' ? 'PayNow · 银行卡' : 'KakaoPay · Naver Pay · PAYCO',
+      openErr: '无法打开付款页面，请稍后再试。', sdkErr: '付款模块加载失败。', payMethods: MK === 'kr' && LG === 'ko' ? '카카오페이 · 네이버페이 · PAYCO · 카드' : PM,
       checking: '正在确认付款，稍等。', notConfirmed: '付款没有确认。', ifCharged: '如果已经扣款却看到这个画面，请把下面的订单号发邮件给我们。', orderNo: '订单号', backPrev: '返回预览',
       cancelled: '你取消了付款。没关系，预览还在。', payFail: '付款没有成功。',
       pulling: '正在取出解读……', unpaid: '这份解读还没付款。', notFound: '找不到你的解读。', home: '回到首页',
@@ -214,6 +219,7 @@
   };
   const PLACES = {
     kr: [['seoul', '서울'], ['incheon', '인천'], ['gyeonggi', '경기'], ['gangwon', '강원(춘천·원주)'], ['gangneung', '강원(강릉·동해)'], ['daejeon', '대전'], ['sejong', '세종'], ['chungbuk', '충북'], ['chungnam', '충남'], ['gwangju', '광주'], ['jeonbuk', '전북'], ['jeonnam', '전남'], ['daegu', '대구'], ['gyeongbuk', '경북'], ['busan', '부산'], ['ulsan', '울산'], ['gyeongnam', '경남'], ['jeju', '제주'], ['unknown', '모름(서울 기준)'], ['singapore', '해외: 싱가포르'], ['kl', '해외: 말레이시아']],
+    us: [['new_york', 'New York / US Eastern'], ['chicago', 'Chicago / US Central'], ['denver', 'Denver / US Mountain'], ['phoenix', 'Arizona (Phoenix)'], ['los_angeles', 'Los Angeles / US Pacific'], ['anchorage', 'Alaska'], ['honolulu', 'Hawaii'], ['toronto', 'Toronto / Canada Eastern'], ['vancouver', 'Vancouver / Canada Pacific'], ['london', 'London, UK'], ['sydney', 'Sydney, Australia'], ['singapore', 'Singapore'], ['kl', 'Kuala Lumpur'], ['seoul', 'Seoul, Korea']],
     sg: {
       en: [['singapore', 'Singapore'], ['johor', 'Johor Bahru'], ['kl', 'Kuala Lumpur'], ['penang', 'Penang'], ['sg_unknown', 'Not sure (use Singapore)'], ['seoul', 'Seoul, Korea']],
       zh: [['singapore', '新加坡'], ['johor', '新山'], ['kl', '吉隆坡'], ['penang', '槟城'], ['sg_unknown', '不确定（按新加坡）'], ['seoul', '韩国首尔']],
@@ -326,7 +332,7 @@
     secMine: '我的解读', mineD: '在这台手机上买过的解读', mineItem: i => `我的解读 ${i}`, mineOpen: '再看一次',
     manseH: n => `${n ? n + '的' : '我的'}命盘`, manseNote: '这是你的八字和五行。它们怎么交织，让海朗道令来解。', manseCta: '听海朗道令解读（免费预览）', manseAgain: '换个生日再看',
   };
-  window.I18N = { LG, MK, t: T[LG], money, FROM, MO, josa, places: MK === 'kr' ? PLACES.kr : PLACES.sg[LG], place0: MK === 'kr' ? 'seoul' : 'singapore', cur: MK === 'sg' ? 'SGD' : 'KRW' };
+  window.I18N = { LG, MK, t: T[LG], money, FROM, MO, josa, places: MK === 'kr' ? PLACES.kr : MK === 'us' ? PLACES.us : PLACES.sg[LG], place0: MK === 'kr' ? 'seoul' : MK === 'my' ? 'kl' : MK === 'sg' ? 'singapore' : ({ 'America/Chicago': 'chicago', 'America/Denver': 'denver', 'America/Phoenix': 'phoenix', 'America/Los_Angeles': 'los_angeles', 'America/Anchorage': 'anchorage', 'Pacific/Honolulu': 'honolulu', 'America/Toronto': 'toronto', 'America/Vancouver': 'vancouver', 'Europe/London': 'london', 'Australia/Sydney': 'sydney', 'Australia/Melbourne': 'sydney' }[TZ] || 'new_york'), cur: CUR };
   if (LG === 'zh') { const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@700&display=swap'; document.head.appendChild(l); }
   document.title = { ko: '해랑사주 — 돌려 말 안 하는 도령의 사주', en: 'Haerang Saju — a Korean fate reader who won\'t sugar-coat it', zh: '海朗八字 — 不拐弯抹角的韩国算命' }[LG];
 })();
