@@ -292,3 +292,9 @@ select,.inp{width:100%;min-height:52px;padding:12px;border-radius:12px;border:1p
 .mecard span{font-size:14px;color:var(--ink)}
 .mecard .btn{min-height:46px;padding:12px;font-size:15px}
 .mecard .lnk{align-self:center}
+.topr{position:relative}
+.langm{position:absolute;right:0;top:44px;min-width:128px;background:#16131c;border:1px solid rgba(226,194,122,.4);border-radius:14px;padding:6px;box-shadow:0 10px 30px rgba(0,0,0,.5);z-index:20;display:flex;flex-direction:column}
+.langm[hidden]{display:none}
+.langm button{background:none;border:0;color:var(--ink);text-align:left;padding:10px 12px;border-radius:10px;font-size:15px;cursor:pointer}
+.langm button.on{color:var(--gold);font-weight:700}
+.langm button:hover{background:rgba(226,194,122,.12)}

@@ -702,9 +702,16 @@
   /* ---- 말 바꾸기(오른쪽 위): 한·영·중·일. 나라(가격)는 그대로 둔다 ---- */
   (() => {
     const tr = document.querySelector('.topr'); if (!tr) return;
-    const NX = { ko: ['en', 'EN'], en: ['zh', '中'], zh: ['ja', '日'], ja: ['ko', '한'] }[LG];
-    tr.innerHTML = `<button class="lang" aria-label="language">${NX[1]}</button>`;
-    tr.firstChild.onclick = () => { const u = new URL(location.href); u.searchParams.set('lang', NX[0]); u.searchParams.set('mk', MK); location.href = u.toString(); };
+    const LS = [['ko', '한국어', '한'], ['en', 'English', 'EN'], ['zh', '中文', '中'], ['ja', '日本語', '日']];
+    tr.innerHTML = `<button class="lang" aria-label="language" aria-haspopup="true">${LS.find(x => x[0] === LG)[2]}</button>
+      <div class="langm" hidden>${LS.map(([k, n]) => `<button data-lg="${k}" class="${k === LG ? 'on' : ''}">${n}${k === LG ? ' ✓' : ''}</button>`).join('')}</div>`;
+    const m = tr.querySelector('.langm');
+    tr.querySelector('.lang').onclick = e => { e.stopPropagation(); m.hidden = !m.hidden; };
+    document.addEventListener('click', () => { m.hidden = true; });
+    m.querySelectorAll('[data-lg]').forEach(b => b.onclick = e => {
+      e.stopPropagation(); if (b.dataset.lg === LG) { m.hidden = true; return; }
+      const u = new URL(location.href); u.searchParams.set('lang', b.dataset.lg); u.searchParams.set('mk', MK); location.href = u.toString();
+    });
   })();
   /* 맨 위 가게 이름 = 홈: 누르면 언제든 전체 메뉴로 */
   (() => { const b = document.querySelector('.brand'); b.textContent = t.brand; b.setAttribute('role', 'link'); b.onclick = () => { history.replaceState(null, '', BASE); hist.length = 0; MODE = 'read'; go(shop); }; })();
