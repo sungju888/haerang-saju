@@ -85,7 +85,7 @@
       <div class="menu" id="menu">${S.menu.map(([id, cat, ic, nm, d, rd, live]) => { const on = live !== 0 || PX_LIVE.includes(id); return `<button class="mn ${on ? '' : 'off'}" data-id="${id}" data-cat="${cat}">
         <span class="mn-i">${rd !== 'free' ? `<img src="m/${rd}/key.jpg${mv}" alt="" loading="lazy" onerror="this.remove()">` : ''}<span>${ic}</span></span>
         <span class="mn-t"><b>${esc(nm)}</b><small>${esc(d)}</small><em>${rd === 'free' ? esc(S.free) : !on ? esc(S.soon) : PXM[id] ? esc(I.money(PXPRICE(id))) : esc(S.from(I.money(I.FROM)))}</em></span></button>`; }).join('')}</div>
-      ${owned.length ? `<h2 class="sh-t">${esc(S.secMine)}</h2><p class="sh-ts">${esc(S.mineD)}</p><div class="mine">${owned.slice(0, 5).map((o, i) => `<a class="mi" href="${BASE}?r=${o.rid}&k=${o.key}"><span>📜 ${esc(S.mineItem(i + 1))}</span><em>${esc(S.mineOpen)} ›</em></a>`).join('')}</div>` : ''}
+      ${owned.length || canLogin() || AUTH ? `<h2 class="sh-t">${esc(S.secMine)}</h2><p class="sh-ts">${esc(S.mineD)}</p><div id="acct"></div>` : ''}
       ${READERS.some(r => !r.live) ? `<h2 class="sh-t">${esc(S.secSoon)}</h2><p class="sh-ts">${esc(S.soonD)}</p>` : ''}
       <div class="soons">${READERS.filter(r => !r.live).map(r => `<div class="sn"><img src="${r.img}${mv}" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><b>${esc(S.banner[r.id][0])}</b><small>${esc(S.banner[r.id][1])}</small></div>`).join('')}</div>
       ${bizFoot()}</div>`, false, true);
@@ -98,6 +98,7 @@
       if (PXM[id]) { pxStart(id); return; }
       MODE = 'read'; B.focus = id === 'all' ? null : id; go(intro);
     });
+    renderAcct(); if (AUTH) syncOwned([]).then(renderAcct);
     const bns = $('#bns'), dots = ui.querySelectorAll('.dots span');
     bns.addEventListener('scroll', () => { const i = Math.round(bns.scrollLeft / (bns.firstElementChild.offsetWidth + 12)); dots.forEach((d, j) => d.classList.toggle('on', i === j)); }, { passive: true });
   }
@@ -126,7 +127,7 @@
   const mediaOf = rd => { if (rd === 'haerang') return media('key', true); curMedia = ''; still.src = `m/${rd}/key.jpg?v=${window.CFG.MEDIA_V || 1}`; still.classList.add('kb'); vid.classList.remove('on'); vid.removeAttribute('src'); };
   const freshB = () => Object.assign(B, { name: '', gender: null, cal: 'solar', leap: false, y: 1995, m: 1, d: 1, hh: null, mm: 0, place: I.place0 });
   function pxStart(id) {
-    PXID = id; PEOPLE = []; MODE = 'px'; freshB();
+    PXID = id; PEOPLE = []; MODE = 'px'; freshB(); fillMe();
     track('px_' + id);
     go(PXM[id][2] ? pxAdult : pxIntro);
   }
@@ -197,6 +198,62 @@
     bindHome(`${BASE}?r=${RID}&k=${KEY}&src=home`);
     $('#home').onclick = () => { history.replaceState(null, '', BASE); go(shop); };
   }
+
+
+  /* ---- 로그인·보관함 ----
+     결제 전엔 가입 없이. 로그인하면 산 풀이가 서버 보관함에 남고(폰 바꿔도), 내 생일이 다음 입력에 미리 채워진다.
+     구글(모든 나라)·카카오(한국판). 키가 config.js 에 없으면 그 버튼은 안 보인다. */
+  const CFG = window.CFG;
+  let AUTH = (() => { try { return JSON.parse(ls.get('cw_auth') || 'null'); } catch (e) { return null; } })();
+  const saveAuth = a => { AUTH = a; ls.set('cw_auth', JSON.stringify(a)); };
+  const localOwned = () => { try { return JSON.parse(ls.get('cw_owned') || '[]'); } catch (e) { return []; } };
+  const canLogin = () => !!CFG.GOOGLE_CLIENT_ID || (MK === 'kr' && !!CFG.KAKAO_JS_KEY);
+  function loadScript(src) { return new Promise((ok, no) => { if (document.querySelector(`script[src="${src}"]`)) return ok(); const s = document.createElement('script'); s.src = src; s.async = true; s.onload = ok; s.onerror = no; document.head.appendChild(s); }); }
+  async function loginWith(provider, cred) {
+    try {
+      const j = await api('/api/login', { provider, cred, add: localOwned() });
+      saveAuth({ token: j.token, user: j.user, owned: j.owned });
+      if (j.user.birth) ls.set('cw_me', JSON.stringify(j.user.birth)); else if (ls.get('cw_me')) api('/api/me', { token: j.token, birth: JSON.parse(ls.get('cw_me')) }).catch(() => { });
+      track('login_' + provider); renderAcct();
+    } catch (e) { const el = $('#acerr'); if (el) el.textContent = S.loginErr; }
+  }
+  async function syncOwned(add) {
+    if (!AUTH) return;
+    try { const j = await api('/api/me', { token: AUTH.token, add }); saveAuth(Object.assign(AUTH, { user: j.user, owned: j.owned })); }
+    catch (e) { if (e.status === 401) { AUTH = null; ls.set('cw_auth', 'null'); } }
+  }
+  const PXNAME = id => { const m = S.menu.find(x => x[0] === id); return id === 'haerang' ? S.banner.haerang[0] + ' · ' + S.banner.haerang[1] : m ? m[3] : id; };
+  function renderAcct() {
+    const box = $('#acct'); if (!box) return;
+    if (AUTH) {
+      const list = AUTH.owned || [];
+      box.innerHTML = `<p class="sh-ts">${esc(S.hiUser(AUTH.user.name))} · <button class="lnk" id="lout">${esc(S.logout)}</button></p>
+        ${list.length ? `<div class="mine">${list.map(o => `<a class="mi" href="${BASE}?r=${o.rid}&k=${o.key}"><span>📜 ${esc(PXNAME(o.px))}${o.name ? ' · ' + esc(o.name) : ''}</span><em>${esc(S.mineOpen)} ›</em></a>`).join('')}</div>` : `<p class="sh-ts">${esc(S.mineEmpty)}</p>`}`;
+      $('#lout').onclick = async () => { try { await api('/api/me', { token: AUTH.token, out: true }); } catch (e) { } AUTH = null; ls.set('cw_auth', 'null'); renderAcct(); };
+      return;
+    }
+    const loc = localOwned();
+    box.innerHTML = `${loc.length ? `<div class="mine">${loc.slice(0, 5).map((o, i) => `<a class="mi" href="${BASE}?r=${o.rid}&k=${o.key}"><span>📜 ${esc(S.mineItem(i + 1))}</span><em>${esc(S.mineOpen)} ›</em></a>`).join('')}</div>` : ''}
+      ${canLogin() ? `<div class="login"><p>${esc(S.loginWhy)}</p><div class="lbtns">${MK === 'kr' && CFG.KAKAO_JS_KEY ? `<button class="kakao" id="kk">${esc(S.kakao)}</button>` : ''}<div id="gbtn"></div></div><p class="err" id="acerr"></p></div>` : ''}`;
+    if (CFG.GOOGLE_CLIENT_ID) loadScript('https://accounts.google.com/gsi/client').then(() => {
+      google.accounts.id.initialize({ client_id: CFG.GOOGLE_CLIENT_ID, callback: r => loginWith('google', r.credential), ux_mode: 'popup' });
+      const g = $('#gbtn'); if (g) google.accounts.id.renderButton(g, { theme: 'filled_black', size: 'large', shape: 'pill', text: 'continue_with', locale: LG === 'zh' ? 'zh_CN' : LG, width: 280 });
+    }).catch(() => { });
+    const kk = $('#kk'); if (kk) kk.onclick = async () => {
+      try {
+        await loadScript('https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js');
+        if (!Kakao.isInitialized()) Kakao.init(CFG.KAKAO_JS_KEY);
+        Kakao.Auth.login({ success: a => loginWith('kakao', a.access_token), fail: () => { $('#acerr').textContent = S.loginErr; } });
+      } catch (e) { $('#acerr').textContent = S.loginErr; }
+    };
+  }
+  /* 내 생일 기억: 첫 번째 사람(나)을 넣으면 이 폰에 남기고, 로그인했으면 서버에도 */
+  function rememberMe() {
+    const me = { name: B.name, gender: B.gender, cal: B.cal, leap: B.leap, y: B.y, m: B.m, d: B.d, hh: B.hh, mm: B.mm, place: B.place };
+    ls.set('cw_me', JSON.stringify(me));
+    if (AUTH) api('/api/me', { token: AUTH.token, birth: me }).catch(() => { });
+  }
+  function fillMe() { try { const me = JSON.parse(ls.get('cw_me') || 'null'); if (me) Object.assign(B, me, { place: me.place || I.place0 }); } catch (e) { } }
 
   /* ---- 1. 첫 화면 ---- */
   function intro() {
@@ -269,7 +326,7 @@
         <div class="gap"></div><button class="btn" id="ok">${t.next}</button><button class="opt" id="no">${t.noTime}</button>`, true);
       const plx = $('#plx'); if (plx) plx.onclick = () => { plx.remove(); $('#plw').hidden = false; };
       const save = () => { B.place = $('#pl').value; };
-      const done = () => { track('input_done', { time: B.hh != null }); if (MODE === 'px') pxPersonDone(); else go(reading); };
+      const done = () => { track('input_done', { time: B.hh != null }); if (MODE !== 'px' || !PEOPLE.length) rememberMe(); if (MODE === 'px') pxPersonDone(); else go(reading); };
       $('#ok').onclick = () => { B.hh = +$('#hh').value; B.mm = +$('#mm').value; save(); done(); };
       $('#no').onclick = () => { B.hh = null; save(); done(); };
     }
@@ -429,7 +486,7 @@
     const once = async () => {
       try {
         const j = await api('/api/confirm', hp ? { orderId: oid, hp: 1 } : { paymentKey: qs.get('paymentKey'), orderId: oid, amount: +qs.get('amount') });
-        track('paid', { v: (j.cur === 'KRW' ? j.amount : j.amount / 100) || 0, cur: j.cur }); if (j.just) track('paid_' + j.just); saveOwned(j.rid, j.key);
+        track('paid', { v: (j.cur === 'KRW' ? j.amount : j.amount / 100) || 0, cur: j.cur }); if (j.just) track('paid_' + j.just); saveOwned(j.rid, j.key); syncOwned([{ rid: j.rid, key: j.key }]);
         RID = j.rid; KEY = j.key;
         history.replaceState(null, '', `${BASE}?r=${j.rid}&k=${j.key}`);
         if (j.px) showPx(j.px); else showFull(j.f, j.offers);
@@ -555,7 +612,20 @@
     tr.innerHTML = `<button class="lang" aria-label="language">${NX[1]}</button>`;
     tr.firstChild.onclick = () => { const u = new URL(location.href); u.searchParams.set('lang', NX[0]); u.searchParams.set('mk', MK); location.href = u.toString(); };
   })();
-  document.querySelector('.brand').textContent = t.brand;
+  /* 맨 위 가게 이름 = 홈: 누르면 언제든 전체 메뉴로 */
+  (() => { const b = document.querySelector('.brand'); b.textContent = t.brand; b.setAttribute('role', 'link'); b.onclick = () => { history.replaceState(null, '', BASE); hist.length = 0; MODE = 'read'; go(shop); }; })();
+
+  /* ---- 광고용 바로가기: ?go=haerang|love|money|self|next|all|manse|<새 상품 id>|seoha|yeonji|selene
+     가게를 거치지 않고 바로 그 캐릭터·상품 첫 화면으로. 뒤로 가기는 가게. 예) 한국 광고 ?go=haerang · 영어권 ?go=selene&lang=en */
+  function goDeep(g) {
+    track('deep_' + g.slice(0, 10));
+    hist.push([shop, []]);
+    const R = { seoha: 'classic', yeonji: 'couple', selene: 'zodiac' }[g] || g;
+    if (PXM[R]) return pxStart(R);
+    if (R === 'manse') { MODE = 'manse'; return go(ask, 'who'); }
+    if (['haerang', 'love', 'money', 'self', 'next', 'all'].includes(R)) { MODE = 'read'; B.focus = ['love', 'money', 'self', 'next'].includes(R) ? R : null; return go(intro); }
+    hist.length = 0; go(shop);
+  }
 
   /* ---- 시작 ---- */
   track('view');
@@ -568,5 +638,6 @@
   }
   else if (/^[a-f0-9]{16}$/.test(qs.get('r') || '')) { if (qs.get('src') === 'home' || isStandalone()) track('home_open'); openFull(qs.get('r'), qs.get('k')); }
   else if (isStandalone() && (() => { try { return JSON.parse(ls.get('cw_owned') || '[]')[0]; } catch (e) { } })()) { const o = JSON.parse(ls.get('cw_owned'))[0]; track('home_open'); openFull(o.rid, o.key); }
-  else go(shop);
+  else if (qs.get('go')) { fillMe(); goDeep(qs.get('go')); }
+  else { fillMe(); go(shop); }
 })();

@@ -25,7 +25,7 @@
 
   const T = {
     ko: {
-      brand: '해랑사주', NAME: '해랑 도령',
+      brand: '월하당', NAME: '해랑 도령',
       hook: '"너 올 줄 알았어.<br>네 팔자, 다 보여."',
       sub: p => `만세력으로 뽑은 진짜 원국 · 내년 운 · 연애 상대가 오는 때까지.<br>맛보기는 무료, 더 깊은 풀이는 <b>${p}부터</b>.`,
       enter: '신당 들어가기', fine1: '1분이면 돼 · 회원가입 없음',
@@ -89,7 +89,7 @@
       refundHref: 'refund.html',
     },
     en: {
-      brand: 'Haerang Saju', NAME: 'Haerang',
+      brand: 'Moonlit Hall', NAME: 'Haerang',
       hook: '"Knew you\'d come.<br>I can see your whole fate."',
       sub: p => `Your real BaZi chart from the Ten-Thousand-Year Calendar · next year's luck · when love shows up.<br>The preview is free. Deeper readings from <b>${p}</b>.`,
       enter: 'Step inside', fine1: 'Takes 1 minute · No sign-up',
@@ -153,7 +153,7 @@
       refundHref: 'refund-en.html',
     },
     zh: {
-      brand: '海朗八字', NAME: '海朗',
+      brand: '月下堂', NAME: '海朗',
       hook: '"就知道你会来。<br>你的命，我全看得见。"',
       sub: p => `用万年历排出的真实八字 · 明年运势 · 对的人何时出现。<br>先免费看，深入解读 <b>${p}起</b>。`,
       enter: '走进神堂', fine1: '只要1分钟 · 不用注册',
@@ -334,6 +334,7 @@
   };
   /* 새 사주 상품 화면 말 */
   Object.assign(T.ko.S, {
+    hiUser: n => `${n || '나'}님 보관함`, logout: '로그아웃', mineEmpty: '아직 산 풀이가 없어.', loginWhy: '로그인하면 산 풀이가 폰을 바꿔도 남고, 생일을 다시 안 넣어도 돼.', kakao: '카카오로 시작하기', loginErr: '로그인이 안 됐어. 다시 해 줘.',
     scoreL: '궁합 점수', adultQ: '29금 — 성인만 들어와', adultD: '수위 꽤 높아. 어른들끼리의 솔직한 밤 얘기야.', adultYes: '네, 19세 이상이에요', adultNo: '돌아갈게요',
     groupQ: n => `지금 ${n}명 넣었어`, groupAdd: '한 명 더 넣기', groupDone: n => `${n}명으로 궁합 보기`, noName: i => `${i}번`,
     lockedMore: '나머지 장은 결제하면 바로 열려.', toShop: '다른 사주 보러 가기',
@@ -351,6 +352,7 @@
     },
   });
   Object.assign(T.en.S, {
+    hiUser: n => `${n ? n + "'s" : 'Your'} readings`, logout: 'Log out', mineEmpty: 'No readings yet.', loginWhy: 'Sign in to keep your readings even on a new phone, and skip typing your birthday next time.', kakao: 'Continue with Kakao', loginErr: "Sign-in didn't work. Try again.",
     scoreL: 'Match score', adultQ: '19+ only from here', adultD: "It gets spicy. Grown-up, honest after-dark talk.", adultYes: "Yes, I'm 19 or older", adultNo: 'Take me back',
     groupQ: n => `${n} added so far`, groupAdd: 'Add one more', groupDone: n => `Read the match for ${n}`, noName: i => `Person ${i}`,
     lockedMore: 'The rest opens the moment you pay.', toShop: 'Back to all readings',
@@ -368,6 +370,7 @@
     },
   });
   Object.assign(T.zh.S, {
+    hiUser: n => `${n || '我'}的解读`, logout: '退出登录', mineEmpty: '还没有买过的解读。', loginWhy: '登录后，换手机也能看到买过的解读，下次也不用再填生日。', kakao: '用Kakao登录', loginErr: '登录失败，请再试一次。',
     scoreL: '契合分', adultQ: '以下内容仅限19岁以上', adultD: '尺度很大，是成年人之间坦白的夜话。', adultYes: '是的，我已满19岁', adultNo: '返回',
     groupQ: n => `已经加了${n}人`, groupAdd: '再加一个人', groupDone: n => `看${n}人的合盘`, noName: i => `${i}号`,
     lockedMore: '其余章节付款后马上解锁。', toShop: '去看其他解读',
@@ -386,5 +389,5 @@
   });
   window.I18N = { LG, MK, t: T[LG], money, FROM, MO, josa, places: MK === 'kr' ? PLACES.kr : MK === 'us' ? PLACES.us : PLACES.sg[LG], place0: MK === 'kr' ? 'seoul' : MK === 'my' ? 'kl' : MK === 'sg' ? 'singapore' : ({ 'America/Chicago': 'chicago', 'America/Denver': 'denver', 'America/Phoenix': 'phoenix', 'America/Los_Angeles': 'los_angeles', 'America/Anchorage': 'anchorage', 'Pacific/Honolulu': 'honolulu', 'America/Toronto': 'toronto', 'America/Vancouver': 'vancouver', 'Europe/London': 'london', 'Australia/Sydney': 'sydney', 'Australia/Melbourne': 'sydney' }[TZ] || 'new_york'), cur: CUR };
   if (LG === 'zh') { const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@700&display=swap'; document.head.appendChild(l); }
-  document.title = { ko: '해랑사주 — 돌려 말 안 하는 도령의 사주', en: 'Haerang Saju — a Korean fate reader who won\'t sugar-coat it', zh: '海朗八字 — 不拐弯抹角的韩国算命' }[LG];
+  document.title = { ko: '월하당 — 사주·궁합·별자리, 캐릭터마다 다른 풀이', en: 'Moonlit Hall — saju, compatibility & astrology readings', zh: '月下堂 — 八字·合盘·星座解读' }[LG];
 })();
