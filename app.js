@@ -314,7 +314,7 @@
         <div class="seg" id="cal"><button data-c="solar" class="${B.cal === 'solar' ? 'sel' : ''}">${t.solar}</button><button data-c="lunar" class="${B.cal === 'lunar' ? 'sel' : ''}">${t.lunar}</button></div>
         <div class="row">${LG === 'en' ? `<select id="d">${opts(1, 31, B.d, t.d)}</select><select id="m">${opts(1, 12, B.m, t.m)}</select><select id="y">${opts(1930, Y, B.y, t.y)}</select>` : `<select id="y">${opts(1930, Y, B.y, t.y)}</select><select id="m">${opts(1, 12, B.m, t.m)}</select><select id="d">${opts(1, 31, B.d, t.d)}</select>`}</div>
         <label class="chk" id="lp" style="${B.cal === 'lunar' ? '' : 'display:none'}"><input type="checkbox" id="leap" ${B.leap ? 'checked' : ''}> ${t.leap}</label>
-        <div class="err" id="er"></div><button class="btn" id="ok">${t.next}</button><p class="safe">${esc(t.safe)}</p>`, true);
+        <div class="err" id="er"></div><button class="btn" id="ok">${t.next}</button><p class="safe">${esc(t.safe)} <a href="${LG === 'ko' ? 'privacy' : 'privacy-en'}" target="_blank">›</a></p>`, true);
       ui.querySelectorAll('#cal button').forEach(b => b.onclick = () => { B.cal = b.dataset.c; ui.querySelectorAll('#cal button').forEach(x => x.classList.toggle('sel', x === b)); $('#lp').style.display = B.cal === 'lunar' ? '' : 'none'; });
       $('#ok').onclick = () => {
         B.y = +$('#y').value; B.m = +$('#m').value; B.d = +$('#d').value; B.leap = B.cal === 'lunar' && $('#leap').checked;
