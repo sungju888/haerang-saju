@@ -283,3 +283,7 @@ select,.inp{width:100%;min-height:52px;padding:12px;border-radius:12px;border:1p
 .gst{flex:1;min-width:0;font-size:12.5px;line-height:1.6}
 .gst ol{margin:4px 0 0;padding-left:18px}
 .gbadge{display:inline-block;padding:3px 9px;border-radius:999px;background:var(--gold);color:#1d1405;font-weight:700;font-size:10.5px}
+.msi{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:radial-gradient(circle at 50% 30%,#2b2333,#141019);border:1px solid rgba(226,194,122,.4);border-radius:12px}
+.msi b{font:700 11px/1 "Noto Serif SC","Gowun Batang",serif;color:var(--gold);letter-spacing:.12em}
+.msi span{display:grid;grid-template-columns:repeat(4,13px);gap:2px}
+.msi i{font:700 10px/14px "Noto Serif SC",serif;font-style:normal;text-align:center;border-radius:3px;color:#16131c}

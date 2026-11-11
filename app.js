@@ -72,6 +72,8 @@
   /* 마지막으로 본 캐릭터(광고로 들어온 캐릭터 포함)를 기억해 가게에서 맨 앞에 세운다 */
   const lastRd = () => ls.get('cw_rd') || 'haerang';
   const setRd = r => r && ls.set('cw_rd', r);
+  /* 무료 만세력 아이콘: 사주 여덟 글자(원국표)를 오행 색으로 — 그림 없이 */
+  const MANSE_ICON = `<span class="msi"><b>萬歲曆</b><span>${[['甲', '목'], ['丙', '화'], ['戊', '토'], ['庚', '금'], ['子', '수'], ['午', '화'], ['辰', '토'], ['申', '금']].map(([c, e]) => `<i class="el-${e}">${c}</i>`).join('')}</span></span>`;
   function shop() {
     track('shop');
     const first = lastRd();
@@ -90,7 +92,7 @@
       <h2 class="sh-t">${esc(S.secTopic)}</h2><p class="sh-ts">${esc(S.secTopicSub)}</p>
       <div class="cats" id="cats">${S.cats.map(([k, n], i) => `<button data-c="${k}" class="${i ? '' : 'sel'}">${esc(n)}</button>`).join('')}</div>
       <div class="menu" id="menu">${MENU.map(([id, cat, ic, nm, d, rd, live]) => { const on = live !== 0 || PX_LIVE.includes(id); return `<button class="mn ${on ? '' : 'off'}" data-id="${id}" data-cat="${cat}">
-        <span class="mn-i">${rd !== 'free' ? `<img src="m/${rd}/key.jpg${mv}" alt="" loading="lazy" onerror="this.remove()">` : ''}<span>${ic}</span></span>
+        <span class="mn-i">${rd !== 'free' ? `<img src="m/${rd}/key.jpg${mv}" alt="" loading="lazy" onerror="this.remove()"><span>${ic}</span>` : MANSE_ICON}</span>
         <span class="mn-t"><b>${esc(nm)}</b><small>${esc(d)}</small><em>${rd === 'free' ? esc(S.free) : !on ? esc(S.soon) : PXM[id] ? esc(I.money(PXPRICE(id))) : esc(S.from(I.money(I.FROM)))}</em></span></button>`; }).join('')}</div>
       ${owned.length || canLogin() || AUTH ? `<h2 class="sh-t">${esc(S.secMine)}</h2><p class="sh-ts">${esc(S.mineD)}</p><div id="acct"></div>` : ''}
       ${READERS.some(r => !r.live) ? `<h2 class="sh-t">${esc(S.secSoon)}</h2><p class="sh-ts">${esc(S.soonD)}</p>` : ''}
