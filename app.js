@@ -207,7 +207,7 @@
   let AUTH = (() => { try { return JSON.parse(ls.get('cw_auth') || 'null'); } catch (e) { return null; } })();
   const saveAuth = a => { AUTH = a; ls.set('cw_auth', JSON.stringify(a)); };
   const localOwned = () => { try { return JSON.parse(ls.get('cw_owned') || '[]'); } catch (e) { return []; } };
-  const canLogin = () => !!CFG.GOOGLE_CLIENT_ID || (MK === 'kr' && !!CFG.KAKAO_JS_KEY);
+  const canLogin = () => !!CFG.GOOGLE_CLIENT_ID || (MK === 'kr' && !!CFG.KAKAO_REST_KEY);
   function loadScript(src) { return new Promise((ok, no) => { if (document.querySelector(`script[src="${src}"]`)) return ok(); const s = document.createElement('script'); s.src = src; s.async = true; s.onload = ok; s.onerror = no; document.head.appendChild(s); }); }
   async function loginWith(provider, cred) {
     try {
@@ -234,19 +234,26 @@
     }
     const loc = localOwned();
     box.innerHTML = `${loc.length ? `<div class="mine">${loc.slice(0, 5).map((o, i) => `<a class="mi" href="${BASE}?r=${o.rid}&k=${o.key}"><span>📜 ${esc(S.mineItem(i + 1))}</span><em>${esc(S.mineOpen)} ›</em></a>`).join('')}</div>` : ''}
-      ${canLogin() ? `<div class="login"><p>${esc(S.loginWhy)}</p><div class="lbtns">${MK === 'kr' && CFG.KAKAO_JS_KEY ? `<button class="kakao" id="kk">${esc(S.kakao)}</button>` : ''}<div id="gbtn"></div></div><p class="err" id="acerr"></p></div>` : ''}`;
+      ${canLogin() ? `<div class="login"><p>${esc(S.loginWhy)}</p><div class="lbtns">${MK === 'kr' && CFG.KAKAO_REST_KEY ? `<button class="kakao" id="kk">${esc(S.kakao)}</button>` : ''}<div id="gbtn"></div></div><p class="err" id="acerr"></p></div>` : ''}`;
     if (CFG.GOOGLE_CLIENT_ID) loadScript('https://accounts.google.com/gsi/client').then(() => {
       google.accounts.id.initialize({ client_id: CFG.GOOGLE_CLIENT_ID, callback: r => loginWith('google', r.credential), ux_mode: 'popup' });
       const g = $('#gbtn'); if (g) google.accounts.id.renderButton(g, { theme: 'filled_black', size: 'large', shape: 'pill', text: 'continue_with', locale: LG === 'zh' ? 'zh_CN' : LG, width: 280 });
     }).catch(() => { });
-    const kk = $('#kk'); if (kk) kk.onclick = async () => {
-      try {
-        await loadScript('https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js');
-        if (!Kakao.isInitialized()) Kakao.init(CFG.KAKAO_JS_KEY);
-        Kakao.Auth.login({ success: a => loginWith('kakao', a.access_token), fail: () => { $('#acerr').textContent = S.loginErr; } });
-      } catch (e) { $('#acerr').textContent = S.loginErr; }
+    const kk = $('#kk'); if (kk) kk.onclick = () => {                     // 카카오 로그인 화면으로 갔다가 /api/kakao 를 거쳐 #login= 으로 돌아온다
+      const st = Math.random().toString(36).slice(2, 14); ls.set('cw_kst', st); track('login_kakao_go');
+      location.href = `https://kauth.kakao.com/oauth/authorize?client_id=${CFG.KAKAO_REST_KEY}&redirect_uri=${encodeURIComponent(location.origin + '/api/kakao')}&response_type=code&state=${st}`;
     };
   }
+  /* 카카오에서 돌아왔을 때: 주소 # 의 세션 열쇠를 받아 보관함을 맞춘다(state 가 같을 때만) */
+  (() => {
+    const h = new URLSearchParams(location.hash.slice(1)); if (!h.get('login')) return;
+    history.replaceState(null, '', location.pathname + location.search);
+    if (h.get('st') !== ls.get('cw_kst')) return;
+    if (h.get('login') === 'fail') { setTimeout(() => { const el = $('#acerr'); if (el) el.textContent = S.loginErr; }, 1500); return; }
+    AUTH = { token: h.get('login'), user: { name: '' }, owned: [] }; ls.set('cw_auth', JSON.stringify(AUTH));
+    track('login_kakao');
+    api('/api/me', { token: AUTH.token, add: localOwned(), birth: ls.get('cw_me') ? JSON.parse(ls.get('cw_me')) : undefined }).then(j => { saveAuth(Object.assign(AUTH, { user: j.user, owned: j.owned })); renderAcct(); }).catch(() => { });
+  })();
   /* 내 생일 기억: 첫 번째 사람(나)을 넣으면 이 폰에 남기고, 로그인했으면 서버에도 */
   function rememberMe() {
     const me = { name: B.name, gender: B.gender, cal: B.cal, leap: B.leap, y: B.y, m: B.m, d: B.d, hh: B.hh, mm: B.mm, place: B.place };
@@ -296,7 +303,7 @@
       render(`<h2 class="q">${MODE === 'px' && pxWho() ? esc(pxWho()) : t.qWho}</h2><p class="qs">${t.qsWho}</p>
         <input class="inp" id="nm" maxlength="10" placeholder="${t.ph}" value="${esc(B.name)}" autocomplete="off">
         <div class="gap"></div><div class="seg" id="gd"><button data-g="f" class="${B.gender === 'f' ? 'sel' : ''}">${t.female}</button><button data-g="m" class="${B.gender === 'm' ? 'sel' : ''}">${t.male}</button></div>
-        <div class="err" id="er"></div><button class="btn" id="ok">${t.next}</button>`, true);
+        <div class="err" id="er"></div><button class="btn" id="ok">${t.next}</button><p class="safe">${esc(t.safe)} <a href="${LG === 'ko' ? 'privacy' : 'privacy-en'}" target="_blank">›</a></p>`, true);
       ui.querySelectorAll('#gd button').forEach(b => b.onclick = () => { B.gender = b.dataset.g; ui.querySelectorAll('#gd button').forEach(x => x.classList.toggle('sel', x === b)); $('#ok').textContent = t.next; });
       $('#ok').textContent = B.gender ? t.next : t.pickG;
       $('#ok').onclick = () => { if (!B.gender) { $('#er').textContent = t.needG; return; } B.name = $('#nm').value.trim().slice(0, 10); go(ask, 'date'); };
@@ -307,7 +314,7 @@
         <div class="seg" id="cal"><button data-c="solar" class="${B.cal === 'solar' ? 'sel' : ''}">${t.solar}</button><button data-c="lunar" class="${B.cal === 'lunar' ? 'sel' : ''}">${t.lunar}</button></div>
         <div class="row">${LG === 'en' ? `<select id="d">${opts(1, 31, B.d, t.d)}</select><select id="m">${opts(1, 12, B.m, t.m)}</select><select id="y">${opts(1930, Y, B.y, t.y)}</select>` : `<select id="y">${opts(1930, Y, B.y, t.y)}</select><select id="m">${opts(1, 12, B.m, t.m)}</select><select id="d">${opts(1, 31, B.d, t.d)}</select>`}</div>
         <label class="chk" id="lp" style="${B.cal === 'lunar' ? '' : 'display:none'}"><input type="checkbox" id="leap" ${B.leap ? 'checked' : ''}> ${t.leap}</label>
-        <div class="err" id="er"></div><button class="btn" id="ok">${t.next}</button>`, true);
+        <div class="err" id="er"></div><button class="btn" id="ok">${t.next}</button><p class="safe">${esc(t.safe)}</p>`, true);
       ui.querySelectorAll('#cal button').forEach(b => b.onclick = () => { B.cal = b.dataset.c; ui.querySelectorAll('#cal button').forEach(x => x.classList.toggle('sel', x === b)); $('#lp').style.display = B.cal === 'lunar' ? '' : 'none'; });
       $('#ok').onclick = () => {
         B.y = +$('#y').value; B.m = +$('#m').value; B.d = +$('#d').value; B.leap = B.cal === 'lunar' && $('#leap').checked;

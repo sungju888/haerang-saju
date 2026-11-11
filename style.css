@@ -245,3 +245,5 @@ select,.inp{width:100%;min-height:52px;padding:12px;border-radius:12px;border:1p
 .login p{font-size:13px;color:var(--dim);margin:0 0 10px;line-height:1.5}
 .lbtns{display:flex;flex-direction:column;align-items:center;gap:10px}
 .kakao{width:280px;max-width:100%;height:44px;border:0;border-radius:22px;background:#FEE500;color:#191919;font-weight:700;font-size:15px;cursor:pointer}
+.safe{font-size:12px;line-height:1.55;color:var(--dim);background:rgba(18,15,22,.7);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 12px;margin:12px 0 0}
+.safe a{color:var(--gold);text-decoration:none}
