@@ -85,7 +85,7 @@
       iosShare: '<b>공유</b> 누르기', iosAdd: '목록을 아래로 내려 <b>「홈 화면에 추가」</b>', iosOk: '오른쪽 위 <b>추가</b>',
       andHow: '버튼 한 번이면 앱처럼 홈 화면에 생겨.', addBtn: '홈 화면에 추가', andMan: '버튼이 안 보이면: 오른쪽 위 <b>⋮</b> → <b>「홈 화면에 추가」</b> (삼성 인터넷은 <b>≡</b> → <b>「현재 페이지 추가」</b>)',
       homeT: '홈 화면에 월하당 두기', homeS: '앱처럼 바로 열리고, 산 풀이는 보관함에 그대로 있어.', safariOnly: '사파리에서만 돼요 · 크롬은 안 돼요', gShare: '공유', copyOnly: '풀이 링크만 복사', copied: '복사했어 ✓', promptCopy: '이 주소를 복사해 둬',
-      biz: () => `판매자 ${SELLER.name} · 대표 조성주 · 등록번호 ${SELLER.reg}<br>${SELLER.addr}<br>고객센터 ${SELLER.mail} · ${SELLER.tel}<br><a href="terms.html">이용약관</a> · <a href="refund.html">환불 정책</a> · <a href="privacy.html">개인정보처리방침</a>`,
+      biz: () => `판매자 ${SELLER.name} · 대표 조성주 · 등록번호 ${SELLER.reg}<br>고객센터 ${SELLER.mail}<br><a href="terms.html">이용약관</a> · <a href="refund.html">환불 정책</a> · <a href="privacy.html">개인정보처리방침</a>`,
       refundHref: 'refund.html',
     },
     en: {
@@ -149,7 +149,7 @@
       iosShare: 'Tap <b>Share</b>', iosAdd: 'Scroll down to <b>"Add to Home Screen"</b>', iosOk: 'Tap <b>Add</b> top right',
       andHow: 'One tap and it sits on your home screen like an app.', addBtn: 'Add to home screen', andMan: 'No button? Tap <b>⋮</b> top right → <b>"Add to Home screen"</b> (Samsung Internet: <b>≡</b> → <b>"Add page to"</b>)',
       homeT: 'Put Moonlit Hall on your home screen', homeS: 'Opens like an app — your readings stay in My readings.', safariOnly: 'Safari only · not Chrome', gShare: 'Share', copyOnly: 'Just copy the link', copied: 'Copied ✓', promptCopy: 'Copy this link',
-      biz: () => `Sold by ${SELLER.name} · Reg. ${SELLER.reg}<br>${SELLER.addr}<br>${SELLER.mail}<br><a href="terms-en.html">Terms</a> · <a href="refund-en.html">Refund policy</a> · <a href="privacy-en.html">Privacy</a>`,
+      biz: () => `Sold by ${SELLER.name} · Reg. ${SELLER.reg}<br>${SELLER.mail}<br><a href="terms-en.html">Terms</a> · <a href="refund-en.html">Refund policy</a> · <a href="privacy-en.html">Privacy</a>`,
       refundHref: 'refund-en.html',
     },
     zh: {
@@ -213,7 +213,7 @@
       iosShare: '点<b>分享</b>', iosAdd: '往下滑，点<b>「添加到主屏幕」</b>', iosOk: '点右上角<b>添加</b>',
       andHow: '一键就能像应用一样出现在主屏幕。', addBtn: '添加到主屏幕', andMan: '没看到按钮：右上角<b>⋮</b> → <b>「添加到主屏幕」</b>（三星浏览器：<b>≡</b> → <b>「添加页面至」</b>）',
       homeT: '把月下堂放到主屏幕', homeS: '像应用一样直接打开，买的解读都在「我的解读」里。', safariOnly: '只能用 Safari · Chrome 不行', gShare: '分享', copyOnly: '只复制链接', copied: '已复制 ✓', promptCopy: '请复制这个链接',
-      biz: () => `销售方 ${SELLER.name} · 注册号 ${SELLER.reg}<br>${SELLER.addr}<br>${SELLER.mail}<br><a href="terms-en.html">条款</a> · <a href="refund-en.html">退款政策</a> · <a href="privacy-en.html">隐私政策</a>`,
+      biz: () => `销售方 ${SELLER.name} · 注册号 ${SELLER.reg}<br>${SELLER.mail}<br><a href="terms-en.html">条款</a> · <a href="refund-en.html">退款政策</a> · <a href="privacy-en.html">隐私政策</a>`,
       refundHref: 'refund-en.html',
     },
   };
