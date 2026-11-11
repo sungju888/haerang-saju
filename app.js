@@ -75,7 +75,7 @@
     const banner = r => { const [cat, nm, line] = S.banner[r.id]; return `<button class="bn ${r.live ? '' : 'off'}" data-r="${r.id}">
         <img src="${r.img}${mv}" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><span class="bn-sh"></span>
         <span class="bn-tx"><em>${esc(cat)}</em><b>${esc(nm)}</b><small>${esc(line)}</small>
-        <i>${r.live ? esc(BANNER_GO[r.id] ? I.money(PXPRICE(BANNER_GO[r.id])) : S.from(I.money(I.FROM))) + ' · ' + esc(S.open) + ' ›' : esc(S.soon)}</i></span></button>`; };
+        <i>${r.live ? esc(S.open) + ' ›' : esc(S.soon)}</i></span></button>`; };
     render(`<div class="shopw">
       <h1 class="sh-h">${esc(S.hi)}</h1><p class="sh-s">${esc(S.hiSub)}</p>
       <div class="bns" id="bns">${READERS.map(banner).join('')}</div>

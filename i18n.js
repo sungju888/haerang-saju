@@ -27,7 +27,7 @@
     ko: {
       brand: '월하당', NAME: '해랑 도령',
       hook: '"너 올 줄 알았어.<br>네 팔자, 다 보여."',
-      sub: p => `만세력으로 뽑은 진짜 원국 · 내년 운 · 연애 상대가 오는 때까지.<br>맛보기는 무료, 더 깊은 풀이는 <b>${p}부터</b>.`,
+      sub: p => `만세력으로 뽑은 진짜 원국 · 내년 운 · 연애 상대가 오는 때까지.`,
       enter: '신당 들어가기', fine1: '1분이면 돼 · 회원가입 없음',
       SCENES: [
         { nar: ['창호지 문 틈으로 촛불이 흔들린다.', '방울 소리가 한 번… 누군가 이미 너를 기다리고 있다.'], ask: ['조심스럽게 들어간다'] },
@@ -91,7 +91,7 @@
     en: {
       brand: 'Moonlit Hall', NAME: 'Haerang',
       hook: '"Knew you\'d come.<br>I can see your whole fate."',
-      sub: p => `Your real BaZi chart from the Ten-Thousand-Year Calendar · next year's luck · when love shows up.<br>The preview is free. Deeper readings from <b>${p}</b>.`,
+      sub: p => `Your real BaZi chart from the Ten-Thousand-Year Calendar · next year's luck · when love shows up.`,
       enter: 'Step inside', fine1: 'Takes 1 minute · No sign-up',
       SCENES: [
         { nar: ['Candlelight flickers through the paper door.', 'A bell rings once… someone is already waiting for you.'], ask: ['Step in quietly'] },
@@ -155,7 +155,7 @@
     zh: {
       brand: '月下堂', NAME: '海朗',
       hook: '"就知道你会来。<br>你的命，我全看得见。"',
-      sub: p => `用万年历排出的真实八字 · 明年运势 · 对的人何时出现。<br>先免费看，深入解读 <b>${p}起</b>。`,
+      sub: p => `用万年历排出的真实八字 · 明年运势 · 对的人何时出现。`,
       enter: '走进神堂', fine1: '只要1分钟 · 不用注册',
       SCENES: [
         { nar: ['烛光透过窗纸摇晃。', '铃声响了一下……有人早就在等你了。'], ask: ['小心地走进去'] },
