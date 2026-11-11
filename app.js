@@ -179,7 +179,7 @@
       const sk = $('#skip'); if (sk) sk.onclick = () => go(ask, 'who');
     }, i === 0 ? 900 : 700);
   }
-  const PXPRICE = id => ({ kr: [19900, 39000], sg: [1890, 3590], my: [5700, 10800], us: [1399, 2799] }[MK][id === 'classic' ? 1 : 0]);   // 서버 cfg.js PX_PRICE 와 같게
+  const PXPRICE = id => ({ kr: [19900, 39000], sg: [1890, 3590], my: [5700, 10800], us: [1399, 2799], jp: [2280, 4280] }[MK][id === 'classic' ? 1 : 0]);   // 서버 cfg.js PX_PRICE 와 같게
   /* 입력 질문 머리말: 몇 번째 사람인지 */
   const pxWho = () => { const x = PXT(PXID), i = PEOPLE.length; return (x.who || [])[Math.min(i, (x.who || []).length - 1)] || ''; };
   function pxPersonDone() {
@@ -364,7 +364,7 @@
       render(`${meCard}<h2 class="q">${MODE === 'px' && pxWho() ? esc(pxWho()) : t.qWho}</h2><p class="qs">${t.qsWho}</p>
         <input class="inp" id="nm" maxlength="10" placeholder="${t.ph}" value="${esc(B.name)}" autocomplete="off">
         <div class="gap"></div><div class="seg" id="gd"><button data-g="f" class="${B.gender === 'f' ? 'sel' : ''}">${t.female}</button><button data-g="m" class="${B.gender === 'm' ? 'sel' : ''}">${t.male}</button></div>
-        <div class="err" id="er"></div><button class="btn" id="ok">${t.next}</button><p class="safe">${esc(t.safe)} <a href="${LG === 'ko' ? 'privacy' : 'privacy-en'}" target="_blank">›</a></p>`, true);
+        <div class="err" id="er"></div><button class="btn" id="ok">${t.next}</button><p class="safe">${esc(t.safe)} <a href="${LG === 'ko' ? 'privacy' : LG === 'ja' ? 'privacy-ja' : 'privacy-en'}" target="_blank">›</a></p>`, true);
       if (me && me.gender) {
         $('#useme').onclick = () => { Object.assign(B, me, { place: me.place || I.place0 }); track('input_me'); track('input_done', { time: B.hh != null }); if (MODE === 'px') pxPersonDone(); else go(reading); };
         $('#notme').onclick = () => { $('.mecard').remove(); Object.assign(B, { name: '', gender: null }); $('#nm').value = ''; ui.querySelectorAll('#gd button').forEach(x => x.classList.remove('sel')); };
@@ -379,7 +379,7 @@
         <div class="seg" id="cal"><button data-c="solar" class="${B.cal === 'solar' ? 'sel' : ''}">${t.solar}</button><button data-c="lunar" class="${B.cal === 'lunar' ? 'sel' : ''}">${t.lunar}</button></div>
         <div class="row">${LG === 'en' ? `<select id="d">${opts(1, 31, B.d, t.d)}</select><select id="m">${opts(1, 12, B.m, t.m)}</select><select id="y">${opts(1930, Y, B.y, t.y)}</select>` : `<select id="y">${opts(1930, Y, B.y, t.y)}</select><select id="m">${opts(1, 12, B.m, t.m)}</select><select id="d">${opts(1, 31, B.d, t.d)}</select>`}</div>
         <label class="chk" id="lp" style="${B.cal === 'lunar' ? '' : 'display:none'}"><input type="checkbox" id="leap" ${B.leap ? 'checked' : ''}> ${t.leap}</label>
-        <div class="err" id="er"></div><button class="btn" id="ok">${t.next}</button><p class="safe">${esc(t.safe)} <a href="${LG === 'ko' ? 'privacy' : 'privacy-en'}" target="_blank">›</a></p>`, true);
+        <div class="err" id="er"></div><button class="btn" id="ok">${t.next}</button><p class="safe">${esc(t.safe)} <a href="${LG === 'ko' ? 'privacy' : LG === 'ja' ? 'privacy-ja' : 'privacy-en'}" target="_blank">›</a></p>`, true);
       ui.querySelectorAll('#cal button').forEach(b => b.onclick = () => { B.cal = b.dataset.c; ui.querySelectorAll('#cal button').forEach(x => x.classList.toggle('sel', x === b)); $('#lp').style.display = B.cal === 'lunar' ? '' : 'none'; });
       $('#ok').onclick = () => {
         B.y = +$('#y').value; B.m = +$('#m').value; B.d = +$('#d').value; B.leap = B.cal === 'lunar' && $('#leap').checked;
@@ -459,7 +459,7 @@
       <section class="sec">${say([t.thisChart(p.name)])}
         ${wonguk(p)}
         <div class="bubble me-card"><div class="who">${NAME}</div><div class="h">${esc(t.meH(p.me))}</div>
-          <p>${esc(p.me.one)}${LG === 'zh' ? '。' : '. '}${esc(p.me.season)}</p></div>
+          <p>${esc(p.me.one)}${LG === 'zh' || LG === 'ja' ? '。' : '. '}${esc(p.me.season)}</p></div>
       </section>
       <section class="sec">${say([t.sting])}
         <div class="bubble cold"><div class="who">${NAME}</div>${p.cold.map(l => `<p>${esc(l)}</p>`).join('')}</div>
@@ -558,7 +558,7 @@
     const once = async () => {
       try {
         const j = await api('/api/confirm', hp ? { orderId: oid, hp: 1 } : { paymentKey: qs.get('paymentKey'), orderId: oid, amount: +qs.get('amount') });
-        track('paid', { v: (j.cur === 'KRW' ? j.amount : j.amount / 100) || 0, cur: j.cur }); if (j.just) track('paid_' + j.just); saveOwned(j.rid, j.key); syncOwned([{ rid: j.rid, key: j.key }]);
+        track('paid', { v: (j.cur === 'KRW' || j.cur === 'JPY' ? j.amount : j.amount / 100) || 0, cur: j.cur }); if (j.just) track('paid_' + j.just); saveOwned(j.rid, j.key); syncOwned([{ rid: j.rid, key: j.key }]);
         RID = j.rid; KEY = j.key;
         history.replaceState(null, '', `${BASE}?r=${j.rid}&k=${j.key}`);
         if (j.px) showPx(j.px); else showFull(j.f, j.offers);
@@ -699,10 +699,10 @@
   }
   function bizFoot() { return `<div class="biz">${t.biz()}</div>`; }
 
-  /* ---- 말 바꾸기(오른쪽 위): 한·영·중. 나라(가격)는 그대로 둔다 ---- */
+  /* ---- 말 바꾸기(오른쪽 위): 한·영·중·일. 나라(가격)는 그대로 둔다 ---- */
   (() => {
     const tr = document.querySelector('.topr'); if (!tr) return;
-    const NX = { ko: ['en', 'EN'], en: ['zh', '中'], zh: ['ko', '한'] }[LG];
+    const NX = { ko: ['en', 'EN'], en: ['zh', '中'], zh: ['ja', '日'], ja: ['ko', '한'] }[LG];
     tr.innerHTML = `<button class="lang" aria-label="language">${NX[1]}</button>`;
     tr.firstChild.onclick = () => { const u = new URL(location.href); u.searchParams.set('lang', NX[0]); u.searchParams.set('mk', MK); location.href = u.toString(); };
   })();

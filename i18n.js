@@ -1,25 +1,25 @@
-/* 화면 말 — 한국어(ko) · 영어(en) · 중국어 간체(zh). 폰 언어를 보고 고른다(?lang=en 처럼 주소로도 바꿀 수 있다).
+/* 화면 말 — 한국어(ko) · 영어(en) · 중국어 간체(zh) · 일본어(ja). 폰 언어를 보고 고른다(?lang=en 처럼 주소로도 바꿀 수 있다).
  * 나라(시장): 한국어면 kr(원화·한국 간편결제), 그 밖은 sg(싱가포르 달러·PayNow 등). ?mk=kr|sg 로 덮어쓸 수 있다. */
 (function () {
   const qs = new URLSearchParams(location.search);
   const ls = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
   const nav = ((navigator.languages && navigator.languages[0]) || navigator.language || 'en').toLowerCase();
-  const pick = l => ['ko', 'en', 'zh'].includes(l) ? l : null;
-  const LG = pick(qs.get('lang')) || pick(ls('cw_lang')) || (nav.startsWith('ko') ? 'ko' : nav.startsWith('zh') ? 'zh' : 'en');
+  const pick = l => ['ko', 'en', 'zh', 'ja'].includes(l) ? l : null;
+  const LG = pick(qs.get('lang')) || pick(ls('cw_lang')) || (nav.startsWith('ko') ? 'ko' : nav.startsWith('zh') ? 'zh' : nav.startsWith('ja') ? 'ja' : 'en');
   /* 나라(시장): 한국어면 kr, 아니면 폰 시간대로 — 싱가포르 sg · 말레이시아 my · 그 밖(미국·영어권 등) us(미국 달러) */
   const TZ = (() => { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) { return ''; } })();
-  const MK = ['kr', 'sg', 'my', 'us'].includes(qs.get('mk')) ? qs.get('mk') : LG === 'ko' ? 'kr' : TZ === 'Asia/Singapore' ? 'sg' : /^Asia\/(Kuala_Lumpur|Kuching)$/.test(TZ) ? 'my' : 'us';
-  const CUR = { kr: 'KRW', sg: 'SGD', my: 'MYR', us: 'USD' }[MK];
+  const MK = ['kr', 'sg', 'my', 'us', 'jp'].includes(qs.get('mk')) ? qs.get('mk') : LG === 'ko' ? 'kr' : LG === 'ja' ? 'jp' : TZ === 'Asia/Singapore' ? 'sg' : /^Asia\/(Kuala_Lumpur|Kuching)$/.test(TZ) ? 'my' : 'us';
+  const CUR = { kr: 'KRW', sg: 'SGD', my: 'MYR', us: 'USD', jp: 'JPY' }[MK];
   try { if (qs.get('lang')) localStorage.setItem('cw_lang', LG); } catch (e) { }
   document.documentElement.lang = LG === 'zh' ? 'zh-Hans' : LG;
 
   const MO = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const josa = (w, a, b) => { const c = String(w).charCodeAt(String(w).length - 1) - 0xac00; return w + (c >= 0 && c <= 11171 && c % 28 ? a : b); };
   const pad = x => String(x).padStart(2, '0');
-  const money = (n, cur) => { const c = cur || CUR; return c === 'KRW' ? (LG === 'ko' ? n.toLocaleString('ko-KR') + '원' : '₩' + n.toLocaleString('en-US')) : ({ SGD: 'S$', MYR: 'RM', USD: '$' }[c] || c + ' ') + (n % 100 ? (n / 100).toFixed(2) : String(n / 100)); };
-  const FROM = { kr: 6900, sg: 690, my: 2100, us: 499 }[MK];   // 「…부터」(cfg.js 의 one 값과 맞춘다)
+  const money = (n, cur) => { const c = cur || CUR; return c === 'JPY' ? '¥' + n.toLocaleString('ja-JP') : c === 'KRW' ? (LG === 'ko' ? n.toLocaleString('ko-KR') + '원' : '₩' + n.toLocaleString('en-US')) : ({ SGD: 'S$', MYR: 'RM', USD: '$' }[c] || c + ' ') + (n % 100 ? (n / 100).toFixed(2) : String(n / 100)); };
+  const FROM = { kr: 6900, sg: 690, my: 2100, us: 499, jp: 780 }[MK];   // 「…부터」(cfg.js 의 one 값과 맞춘다)
   /* 결제 수단 안내(히트페이가 통화마다 실제로 띄우는 것) */
-  const PM = { kr: 'KakaoPay · Naver Pay · PAYCO · Card', sg: 'PayNow · Card · Google Pay', my: 'Touch \'n Go · DuitNow · FPX · GrabPay · ShopeePay · Alipay+ · WeChat Pay · Atome · Card', us: 'Card · Google Pay' }[MK];
+  const PM = { kr: 'KakaoPay · Naver Pay · PAYCO · Card', sg: 'PayNow · Card · Google Pay', my: 'Touch \'n Go · DuitNow · FPX · GrabPay · ShopeePay · Alipay+ · WeChat Pay · Atome · Card', us: 'Card · Google Pay', jp: 'クレジットカード（Visa・Mastercard）' }[MK];
 
   const SELLER = { name: 'SOODY SDN. BHD.', reg: '202601029138 (1691233-P)', addr: '21-05 Jazz Suites, Jalan Seri Tanjung Pinang, 10470 Tanjung Tokong, Penang, Malaysia', mail: 'contact@soody.date', tel: '010-7224-4668' };
 
@@ -219,6 +219,7 @@
   };
   const PLACES = {
     kr: [['seoul', '서울'], ['incheon', '인천'], ['gyeonggi', '경기'], ['gangwon', '강원(춘천·원주)'], ['gangneung', '강원(강릉·동해)'], ['daejeon', '대전'], ['sejong', '세종'], ['chungbuk', '충북'], ['chungnam', '충남'], ['gwangju', '광주'], ['jeonbuk', '전북'], ['jeonnam', '전남'], ['daegu', '대구'], ['gyeongbuk', '경북'], ['busan', '부산'], ['ulsan', '울산'], ['gyeongnam', '경남'], ['jeju', '제주'], ['unknown', '모름(서울 기준)'], ['singapore', '해외: 싱가포르'], ['kl', '해외: 말레이시아']],
+    jp: [['tokyo', '東京'], ['osaka', '大阪'], ['nagoya', '名古屋'], ['sapporo', '札幌'], ['sendai', '仙台'], ['hiroshima', '広島'], ['fukuoka', '福岡'], ['naha', '那覇（沖縄）'], ['jp_unknown', 'わからない（東京基準）'], ['seoul', 'ソウル（韓国）']],
     us: [['new_york', 'New York / US Eastern'], ['chicago', 'Chicago / US Central'], ['denver', 'Denver / US Mountain'], ['phoenix', 'Arizona (Phoenix)'], ['los_angeles', 'Los Angeles / US Pacific'], ['anchorage', 'Alaska'], ['honolulu', 'Hawaii'], ['toronto', 'Toronto / Canada Eastern'], ['vancouver', 'Vancouver / Canada Pacific'], ['london', 'London, UK'], ['sydney', 'Sydney, Australia'], ['singapore', 'Singapore'], ['kl', 'Kuala Lumpur'], ['seoul', 'Seoul, Korea']],
     sg: {
       en: [['singapore', 'Singapore'], ['johor', 'Johor Bahru'], ['kl', 'Kuala Lumpur'], ['penang', 'Penang'], ['sg_unknown', 'Not sure (use Singapore)'], ['seoul', 'Seoul, Korea']],
@@ -457,7 +458,155 @@
       { say: ['告诉我出生日期、时间和地点。', '我把那晚的星空展开给你看。'], ask: ['好'] },
     ],
   };
-  window.I18N = { LG, MK, t: T[LG], money, FROM, MO, josa, places: MK === 'kr' ? PLACES.kr : MK === 'us' ? PLACES.us : PLACES.sg[LG], place0: MK === 'kr' ? 'seoul' : MK === 'my' ? 'kl' : MK === 'sg' ? 'singapore' : ({ 'America/Chicago': 'chicago', 'America/Denver': 'denver', 'America/Phoenix': 'phoenix', 'America/Los_Angeles': 'los_angeles', 'America/Anchorage': 'anchorage', 'Pacific/Honolulu': 'honolulu', 'America/Toronto': 'toronto', 'America/Vancouver': 'vancouver', 'Europe/London': 'london', 'Australia/Sydney': 'sydney', 'Australia/Melbourne': 'sydney' }[TZ] || 'new_york'), cur: CUR };
+  /* 일본어(ja) — 일본 사용자용(四柱推命·占い 말투). 해랑은 반말(タメ口), 서하는 존댓말(です・ます), 연지·셀린은 친근한 반말 */
+  T.ja = {
+    brand: '月下堂', NAME: 'ヘラン道令',
+    hook: '"来ると思ってたよ。<br>お前の運命、全部見えてる。"',
+    sub: p => `万年暦で出した本物の命式 · 来年の運勢 · 運命の人が現れる時期まで。`,
+    enter: '神堂に入る', fine1: '1分で終わる · 会員登録なし',
+    SCENES: [
+      { nar: ['障子の隙間から、ろうそくの灯りが揺れている。', '鈴がひとつ鳴った……誰かがもう、お前を待っている。'], ask: ['そっと中に入る'] },
+      { say: ['……来たね？', '何が知りたい？'], ask: ['えっと……いろいろです。', '私の運命を見てください。'], reply: ['いいよ、ひとつずつ全部見てやる。', 'よし。ちゃんと見てやるよ。'] },
+      { say: ['座りな。取って食いやしないから。', '聞き心地のいいことは言わない。見えたままを言う。'], ask: ['はい……（静かに座る）', '大丈夫です。全部言ってください。'], reply: ['うん、まずは息を整えな。', 'お、覚悟できてるね。じゃあ手加減しないよ。'] },
+      { say: ['生まれた日を言ってみな。', '嘘ついても無駄。運命はごまかせない。'], ask: ['生年月日を伝える'] },
+    ],
+    skip: 'ストーリーをとばす ›', cont: 'つづける ›',
+    safe: '安心してね。名前はニックネームでOK、電話番号・メール・マイナンバーは聞かないよ。生年月日は鑑定の計算にだけ使って、30日後に自動で消えるよ。', qWho: 'なんて呼べばいい？', qsWho: '名前かニックネーム。空けといてもいいよ。', ph: '例：さくら', female: '女性', male: '男性', next: '次へ', pickG: '性別を選んで', needG: '大運の巡る向きは性別で決まるから、これは必須なんだ。',
+    qDate: n => `${n ? n + 'は' : ''}いつ生まれた？`, solar: '新暦（西暦）', lunar: '旧暦', y: x => x + '年', m: x => x + '月', d: x => x + '日', leap: '閏月だよ',
+    noDay: (m, d) => `${m}月に${d}日はないよ。`, lunar30: '旧暦は30日までだよ。',
+    qTime: '何時に生まれた？', qsTime: '時柱は2時間ごとに変わる。だいたいでもわかるなら入れて。',
+    hh: x => (x < 12 ? '午前' : '午後') + (x % 12) + '時', mm: x => pad(x) + '分',
+    otherPlace: MK === 'jp' ? 'ほかの場所で生まれた ›' : MK === 'us' ? 'ほかの場所で生まれた？ ›' : 'シンガポール・マレーシア以外で生まれた？ ›', placeL: '出生地：', placeNote: '生まれた場所の経度で真太陽時に補正するよ（サマータイムも）。', noTime: '時間はわからない',
+    hmm: 'ふむ……', inkErr: '墨がにじんだ。もう一回やろう。', retry: 'もう一度', netErr: 'ちょっと通信が切れたみたい。',
+    timeUnknown: '時間<br>不明',
+    meta: (p, y, m, d) => `新暦 ${y}.${m}.${d} · 旧暦 ${p.lunar.replace(/-/g, '.')} · ${p.tti}年生まれ${p.lmt ? ` · 真太陽時 ${p.lmt}` : ''}`,
+    thisChart: n => `${n ? n + '、' : ''}これがお前の命式だよ。`,
+    meH: me => `${me.icon} ${me.g}（${me.ell || me.el}）の日干 — 「${me.tag}」`,
+    sting: 'ここからはちょっと耳が痛いかもね。', right: '……当たってるでしょ？',
+    yearIntro: (Y, gz, n) => [`それから${Y}年。`, `${gz}の年は、${n || 'お前'}にとってこうなる。`],
+    score: 'ヘラン道令がつけた運勢スコア', yearCk: (gz, ss) => `${gz}年 · ${ss}の年`,
+    yearBlur: 'その年、いちばん大きく動く月は別にある。その月が来る前に、必ず片づけておくべきことがひとつあって、それが',
+    fee: p => `何月に何をすればいいかは……ここから先は見料をもらうよ。いちばん軽いのは${p}。`,
+    loveQ: '恋の話、気になるでしょ？', loveCk: '命式が指しているあの人', dtWhen: '現れる時期', dtVibe: '性格', dtLook: '第一印象', dtWhere: '出会う場所', dtMiss: 'すれ違う理由',
+    missBlur: 'お前のほうから先に気持ちを閉じる瞬間がある。それがまさに', loveFee: nm => `どこで出会うか、なぜすれ違うかは「${nm}」に書いておいたよ。`,
+    rest: '残りは全部ここにある。', chN: i => `第${i}章`, pickOne: p => `ひとつ選んで ${p}`,
+    pickQ: p => ['で、今いちばん知りたいことは何？', `ひとつだけ選びな。それは${p}で深く見てやる。`],
+    PICKS: [['love', '恋愛・人間関係', '恋のパターン、惹かれる人、こじれるポイント'], ['money', 'お金・仕事', 'お金が貯まる仕組みと漏れる穴'], ['self', '自分自身', '生まれ持った本性と隠れた武器'], ['next', 'これから来ること', '来年12か月、月ごとにやること']],
+    whole: 'まるごと全部見たいなら、これもあるよ。',
+    payFine: '1回払い · サブスクじゃない · ' + PM,
+    TIER: {
+      one: ['いちばん気軽に', f => [`今選んだ悩み${f ? `（${f}）` : ''}の章だけ深く`, 'リンクでいつでも見返せる']],
+      love: ['テーマ別', () => ['あの人と出会う場所・すれ違う理由', '来年、縁が動く月', '生まれ持った恋愛パターン + 来年12か月']],
+      money: ['テーマ別', () => ['来年のお金カレンダー — 入る月・出ていく月', 'お金の器と貯まる仕組み', '向いている仕事・才能 + 来年12か月']],
+      all: ['全部ひらく', () => ['上の全章 + 五行の整え方', '一生の大運 — 10年ごとに変わる流れ全部', 'ヘラン道令のひとこと']],
+    },
+    credit: p => `支払い済みの${p}を差し引き`, openFor: p => `${p}でひらく`, lockAt: nm => `「${nm}」でひらく`,
+    payT: 'お支払い', close: '閉じる', loadingPM: '読み込み中…',
+    refundNote: 'お支払い後すぐに鑑定が開くデジタルコンテンツのため、開いた後のキャンセル・返金はできません。鑑定が開かない場合は返金いたします。', refundL: '返金ポリシー',
+    payBtn: p => `${p}を支払う`, goPay: p => `${p}の支払いへ進む`, testBar: 'テストモード — 実際の請求は発生しません',
+    openErr: '決済画面を開けなかった。少ししてからもう一回やってみて。', sdkErr: '決済モジュールを読み込めなかった。', payMethods: MK === 'kr' && LG === 'ko' ? '카카오페이 · 네이버페이 · PAYCO · 카드' : PM,
+    checking: '支払いを確認してる。ちょっと待って。', notConfirmed: '支払いが確認できなかった。', ifCharged: 'お金が引き落とされたのにこの画面が出てたら、下の注文番号を問い合わせ先にメールして。', orderNo: '注文番号', backPrev: 'お試しに戻る',
+    cancelled: '支払いをキャンセルしたね。大丈夫、お試しはそのまま残ってるよ。', payFail: '支払いができなかった。',
+    pulling: '鑑定を取り出してる…', unpaid: 'まだ支払いが済んでない鑑定だよ。', notFound: '鑑定が見つからなかった。', home: '最初に戻る',
+    age: a => `${a}歳〜`, now: '今 · ', dyNote: (ss, y) => `（${ss}の大運、${y}年から）`, lockedP: 'この章にはお前の命式から計算した内容が入ってる。ひらけばすぐ見られるよ。',
+    moSmall: (ko, ss) => `${ko}月 · ${ss}`,
+    fullT: n => `${n || 'お前'}の鑑定`, opened: (n, m) => `${n}章中${m}章がひらいてる`, more: 'ロックされた章も見る？', again: 'ほかの人の命式も見る',
+    homeDone: 'ホーム画面に置いたよ。これからはそこからすぐ開いて。', saveDesk: 'このリンクを保存しておけば、いつでも見返せる。あとで買い足した章も同じリンクに追加されるよ。', copyLink: '鑑定リンクをコピー',
+    kakaoHow: 'カカオトークの中ではホーム画面に追加できない。先に外部ブラウザで開いて。', openIn: b => `${b}で開く`, chrome: 'Chrome',
+    inAnd: 'このアプリの中の画面ではホーム画面に追加できない。Chromeで開けばボタンひとつだよ。',
+    inIOS: '<b>このアプリの中の画面ではホーム画面に追加できない。</b><ol><li>右上（または下）の<b>⋯</b>をタップ</li><li><b>「外部ブラウザで開く」</b>または<b>「Safariで開く」</b></li><li>Safariでこの案内がまた出たら、そのとおりに</li></ol>',
+    copyPaste: '見つからない時：リンクをコピー → Safariに貼り付け', iosOther: 'iPhoneは<b>Safariだけ</b>がホーム画面に追加できるよ。', ifNotOpen: '開かない時はリンクをコピーしてSafariに貼り付けて。', copy: 'リンクをコピー',
+    ios26: 'アドレスバー左の<b>≡</b>をタップ <span class="hk">（古い表示なら下の<b>⋯</b>）</span>', iosOld: '下の<b>共有</b>ボタン（四角に↑）をタップ <span class="hk">（なければ右下の<b>⋯</b> → 共有）</span>',
+    iosShare: '<b>共有</b>をタップ', iosAdd: 'リストを下にスクロールして<b>「ホーム画面に追加」</b>', iosOk: '右上の<b>追加</b>をタップ',
+    andHow: 'ボタンひとつで、アプリみたいにホーム画面に置けるよ。', addBtn: 'ホーム画面に追加', andMan: 'ボタンがない時：右上の<b>⋮</b> → <b>「ホーム画面に追加」</b>（Samsung Internetは<b>≡</b> → <b>「ページを追加」</b>）',
+    homeT: '月下堂をホーム画面に', homeS: 'アプリみたいにすぐ開けて、買った鑑定は保管庫にそのまま残るよ。', safariOnly: 'Safariのみ · Chromeは不可', gShare: '共有', copyOnly: '鑑定リンクだけコピー', copied: 'コピーしたよ ✓', promptCopy: 'このリンクをコピーしておいて',
+    biz: () => `販売者 ${SELLER.name} · 登録番号 ${SELLER.reg}<br>${SELLER.mail}<br><a href="terms-ja.html">利用規約</a> · <a href="refund-ja.html">返金ポリシー</a> · <a href="privacy-ja.html">プライバシーポリシー</a> · <a href="tokushoho-ja.html">特定商取引法に基づく表記</a>`,
+    refundHref: 'refund-ja.html',
+  };
+  T.ja.S = {
+    cats: [['all', 'すべて'], ['love', '恋愛'], ['match', '相性'], ['money', '金運'], ['life', '総合'], ['year', '2027'], ['adult', 'R18'], ['star', '星座']],
+    menu: [
+      ['love', 'love', '💘', '恋はいつ来る？', '恋愛パターン、惹かれる人、相手が現れる時期', 'haerang'],
+      ['money', 'money', '💰', 'お金も仕事も、いつ開ける？', 'お金が貯まる仕組みと漏れる穴', 'haerang'],
+      ['career', 'money', '💼', 'キャリア四柱推命', '生まれ持った仕事の才能と転職のタイミング', 'seoha', 0],
+      ['self', 'life', '🪞', '自分も知らない本当の私', '生まれ持った気質と隠れた武器', 'haerang'],
+      ['all', 'life', '📜', '一生の総合鑑定', '人生の大きな流れ · 大運 · すべての章', 'haerang'],
+      ['next', 'year', '🗓️', '2027年 新年運勢', '来年12か月、月ごとにやること', 'haerang'],
+      ['manse', 'life', '🔢', '無料 命式表', '四柱八字と五行をすぐチェック', 'free'],
+      ['reunion', 'love', '🔁', '復縁占い', 'あの人と、もう一度つながれる？', 'haerang', 0],
+      ['marry', 'love', '💍', '結婚運', 'いつ、どんな人と結婚する？', 'seoha', 0],
+      ['some', 'love', '🫧', '片思い・気になる人', 'あの人の気持ち、今どのあたり？', 'yeonji', 0],
+      ['couple', 'match', '🧧', 'カップル相性', 'ふたりの赤い糸、つながってる？', 'yeonji', 0],
+      ['group', 'match', '👥', 'グループ相性', '家族・友達・同僚、誰と誰が合う？', 'yeonji', 0],
+      ['idol', 'match', '⭐', '推しとの相性', '推しの誕生日で見るふたりの縁', 'yeonji', 0],
+      ['classic', 'life', '🖌️', '正統四柱推命', '命理の原則どおり、一字ずつ', 'seoha', 0],
+      ['night', 'adult', '🔥', '体の相性（R18）', 'ふたりが触れ合ったら何度まで上がる？', 'yeonji', 0],
+      ['desire', 'adult', '🌙', '隠れた恋の本能（R18）', 'あなたのスイッチはどこにある？', 'haerang', 0],
+      ['zodiac', 'star', '✨', '星座占い', '生まれた瞬間の空で読むあなた', 'selene', 0],
+    ],
+    hi: '今日は何が知りたい？', hiSub: '占い師ごとに見方が違うよ。ピンときた人を選んで。',
+    banner: {
+      haerang: ['巫堂占い', 'ヘラン道令', '"来ると思ってたよ。お前の運命、全部見えてる。"'],
+      seoha: ['正統四柱推命', 'ソハ先生', '命理の原則どおり、一字ずつ読み解きます。'],
+      yeonji: ['相性', 'ヨンジ娘子', 'キミとあの人、赤い糸でつながってるか見てみよっか？'],
+      selene: ['星座占い', 'セレーネ', 'あなたが生まれた瞬間、空がどうだったか教えてあげる。'],
+    },
+    soon: 'まもなく公開', open: '見てみる', from: p => `${p}〜`, free: '無料',
+    secTopic: '悩みから選ぶ', secTopicSub: 'お試しは全部無料',
+    topics: [['love', '💘', '恋愛', '恋はいつ、誰と来る？'], ['money', '💰', 'お金・仕事', 'お金はいつ貯まって、どこから漏れる？'], ['self', '🪞', '一生の総合', '生まれ持った本性と人生の大きな流れ'], ['next', '🗓️', '2027年 新年運勢', '来年12か月、月ごとにやること']],
+    manseT: '無料 命式表', manseD: '生年月日を入れるだけで、四柱八字と五行をすぐ出すよ。会員登録なし。', manseBtn: '自分の命式を見る',
+    secSoon: '準備中の占い', soonD: '絵と鑑定文をつくっているところです。公開されたらここにすぐ出ます。',
+    secMine: '保管庫', mineD: 'このスマホで買った鑑定', mineItem: i => `わたしの鑑定 ${i}`, mineOpen: 'もう一度見る',
+    manseH: n => `${n ? n + 'の' : 'あなたの'}命式`, manseNote: 'これがあなたの四柱（年柱・月柱・日柱・時柱）の八字と五行。この字がどう絡み合っているかは、ヘラン道令が読み解いてくれるよ。', manseCta: 'ヘラン道令の鑑定を聞く（お試し無料）', manseAgain: 'ほかの生年月日で見る',
+  };
+  Object.assign(T.ja.S, {
+    meLast: (n, d, h) => `前回入れた情報：${n || '名前なし'} · ${d}${h ? ' ' + h : ''}`, meGo: 'この情報ですぐ見る', meOther: 'ほかの人の情報を入れる',
+    pickCh: p => `気になる章をひとつだけ先にひらくこともできるよ。1章${p}。`, chOnly: p => `この章だけ ${p}`, wholeQ: 'それとも一気に — 大事なところだけか、全部か。', moreQ: '残りの章もひらく？もう払った分は差し引くよ。', tagHalf: '核心', tagAll: '全部',
+    hiUser: n => `${n || 'わたし'}さんの保管庫`, logout: 'ログアウト', mineEmpty: 'まだ買った鑑定はないよ。', loginWhy: 'ログインすれば、スマホを変えても買った鑑定が残るし、生年月日をもう一度入れなくていいよ。', kakao: 'Kakaoではじめる', loginErr: 'ログインできなかった。もう一回やってみて。',
+    scoreL: '相性スコア', adultQ: 'R18 — ここから先は大人だけ', adultD: 'かなり刺激強め。大人どうしの正直な夜の話だよ。', adultYes: 'はい、18歳以上です', adultNo: '戻ります',
+    groupQ: n => `今${n}人入れたよ`, groupAdd: 'もうひとり入れる', groupDone: n => `${n}人の相性を見る`, noName: i => `${i}番目`,
+    lockedMore: '残りの章は支払うとすぐひらくよ。', toShop: 'ほかの占いを見る',
+    px: {
+      reunion: { cat: '復縁占い · ヘラン道令', nm: 'ヘラン道令', hook: '"あの人のこと、<br>まだ思い出すでしょ？"', sub: 'ふたりの命式から、なぜ終わったのか、糸がまだ残っているか、連絡が来る月まで見てやるよ。', who: ['まずお前の話から。名前は？', '次はあの人。名前（ニックネームでもいい）は？'], wait: 'ふたりの間の糸をたどってる…' },
+      marry: { cat: '結婚運 · ソハ先生', nm: 'ソハ先生', hook: '"いつ、どんな方と<br>人生を共にするのでしょう？"', sub: '配偶者の座（日支）と配偶者の星、大運の流れから、結婚の時期とお相手を読み解きます。', who: ['お名前を教えてください。'], wait: '配偶者の宮を読んでいます…' },
+      some: { cat: '片思い · ヨンジ娘子', nm: 'ヨンジ娘子', hook: '"あの人の気持ち、<br>今どのあたり？"', sub: 'キミとあの人の誕生日だけあればOK。告白するタイミングまで教えてあげる。', who: ['キミから！名前は？', 'あの人の名前（ニックネームOK）！誕生日はだいたいでもいいよ。'], wait: 'あの人の気持ちをのぞき見中…' },
+      couple: { cat: 'カップル相性 · ヨンジ娘子', nm: 'ヨンジ娘子', hook: '"キミとあの人、<br>赤い糸でつながってる？"', sub: '惹かれる理由、ケンカになるポイント、結婚まで — ふたりの命式を重ねて見てあげる。', who: ['キミから！名前は？', '次はあの人の名前！'], wait: '赤い糸を2本より合わせてるところ…' },
+      group: { cat: 'グループ相性 · ヨンジ娘子', nm: 'ヨンジ娘子', hook: '"この中で誰と誰が<br>いちばん合うかな？"', sub: '家族・友達・同僚の2〜6人。それぞれの役割、最強コンビ、ぎくしゃくコンビまで全部教えてあげる。', who: ['ひとり目の名前！', '次の人の名前！'], wait: '糸を何本もより合わせてるところ…' },
+      idol: { cat: '推しとの相性 · ヨンジ娘子', nm: 'ヨンジ娘子', hook: '"推しとわたし、<br>どんな縁だったのかな？"', sub: '推しの誕生日だけでOK（時間はわからなくて大丈夫）。ファンとしてのふたりの相性を見てあげる。', who: ['キミから！名前は？', '次は推しの名前！'], wait: '推しとキミの間の糸を探してるところ…' },
+      career: { cat: 'キャリア四柱推命 · ソハ先生', nm: 'ソハ先生', hook: '"得意な仕事は、<br>もう命式に書いてあります。"', sub: '生まれ持った仕事の才能、向いている職業、組織型か独立型か、そして転職・昇進に良い年まで読み解きます。', who: ['お名前を教えてください。'], wait: '仕事の座を読んでいます…' },
+      classic: { cat: '正統四柱推命 · ソハ先生', nm: 'ソハ先生', hook: '"命理の原則どおり、<br>一字ずつ読み解きます。"', sub: '格局・用神・通変星・神殺・大運のすべてを11章にまとめてお伝えします。当店でいちばん深い鑑定です。', who: ['お名前を教えてください。'], wait: '命式を広げて格局を定めています…' },
+      night: { cat: '体の相性 · ヨンジ娘子（R18）', nm: 'ヨンジ娘子', hook: '"ふたりきりの時、<br>温度は何度まで上がる？"', sub: 'どっちが先に火をつけるか、どこが弱いか、ふたりが触れ合ったらどこまで熱くなるか。遠回しには言わないよ。', who: ['キミから！名前は？', '次はあの人の名前！'], wait: 'ふたりの温度を測ってるところ…' },
+      desire: { cat: '隠れた恋の本能 · ヘラン道令（R18）', nm: 'ヘラン道令', hook: '"お前が本当に惹かれるもの、<br>誰も知らないでしょ？"', sub: '表で付き合うタイプじゃなくて、体が本当に反応するタイプ。お前のスイッチ、全部言ってやるよ。', who: ['まず名前。誰にも言わないから。'], wait: 'お前の奥をのぞいてる…' },
+      zodiac: { cat: '星座占い · セレーネ', nm: 'セレーネ', hook: '"あなたが生まれた瞬間、<br>空はこうだったの。"', sub: '太陽・月・アセンダントから金星・火星、来年の木星まで。生まれた時間がわかれば、もっと正確になるよ。', who: ['名前は？'], wait: 'あの夜の星空を広げてるところ…' },
+    },
+  });
+  T.ja.S.go = { haerang: '神堂に入る', seoha: '書斎に入る', yeonji: '月明かりの庭へ', selene: '天文台へのぼる' };
+  T.ja.S.scn = {
+    haerang: [
+      { say: ['……また来たね？', '今度は何が気になって。'], ask: ['ちょっと深い話なんです。', 'とりあえず見てください。'], reply: ['深い話はいいね。遠回しには言わないよ。', 'いいよ、見えたままを言ってやる。'] },
+      { say: ['生年月日だけちょうだい。', 'あとはこっちで読むから。'], ask: ['はい、教えます'] },
+    ],
+    seoha: [
+      { say: ['ようこそ。ソハです。', 'どうぞお掛けください。お茶をお淹れしましょうか？'], ask: ['ありがとうございます。', 'さっそく伺ってもいいですか？'], reply: ['ごゆっくりどうぞ。急ぐことはありませんよ。', 'もちろんです。そのためにいらしたのですから。'] },
+      { say: ['四柱推命は、生まれた瞬間の八つの字で読み解きます。', '生年月日と生まれた時刻を教えていただければ、原則どおり一字ずつお伝えしますね。'], ask: ['はい、お伝えします'] },
+    ],
+    yeonji: [
+      { say: ['あら、お客さんだ！', 'わたしはヨンジ。人と人の間の赤い糸が見えるの。'], ask: ['赤い糸？', 'こんにちは！'], reply: ['うん、縁のある人どうしは小指に糸がつながってるんだよ。', 'よろしくね！その顔、誰かのこと考えて来たでしょ？'] },
+      { say: ['じゃあ、誕生日だけ教えて。', '糸がどこにつながってるか、たどってみるね。'], ask: ['いいよ'] },
+    ],
+    selene: [
+      { say: ['来たのね。今夜は空が澄んでるでしょ？', 'わたしはセレーネ。星を読むの。'], ask: ['星を？', 'こんばんは。'], reply: ['そう。あなたが生まれた瞬間、太陽と月と星がどこにいたかが、あなたを物語ってくれるの。', 'よろしくね。ゆっくり見てあげる。'] },
+      { say: ['生まれた日と時間、場所だけ教えて。', 'あの夜の星空を、そのまま広げてみせるね。'], ask: ['教えるね'] },
+    ],
+  };
+  if (LG === 'ja') {
+    const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@700&display=swap'; document.head.appendChild(l);
+    /* style.css 의 글꼴 목록엔 일본어가 없다 — 한국 글꼴로 한자가 찍히지 않게 덮어쓴다(명조 자리는 Noto Serif JP) */
+    const st = document.createElement('style');
+    st.textContent = 'html[lang=ja] body,html[lang=ja] body *{font-family:"Noto Sans JP",-apple-system,sans-serif!important}html[lang=ja] body :is(.brand,.hook,.nar p,.q,.say p,.wg-ch,.me-card .h,.big-year,.big-score b,.card .ch2,.love dd.when,.toc .cn,.pay .t,.price .now,.chap h3,.mo b,.dy .gz,.tr-h b,.tr-p .now,.sh-h,.bn-tx b,.sh-t,.mse b,.pxw i,.msi b,.msi i){font-family:"Noto Serif JP",serif!important}';
+    document.head.appendChild(st);
+  }
+  window.I18N = { LG, MK, t: T[LG], money, FROM, MO, josa, places: MK === 'kr' ? PLACES.kr : MK === 'jp' ? PLACES.jp : MK === 'us' ? PLACES.us : PLACES.sg[LG] || PLACES.sg.en, place0: MK === 'kr' ? 'seoul' : MK === 'jp' ? 'tokyo' : MK === 'my' ? 'kl' : MK === 'sg' ? 'singapore' : ({ 'America/Chicago': 'chicago', 'America/Denver': 'denver', 'America/Phoenix': 'phoenix', 'America/Los_Angeles': 'los_angeles', 'America/Anchorage': 'anchorage', 'Pacific/Honolulu': 'honolulu', 'America/Toronto': 'toronto', 'America/Vancouver': 'vancouver', 'Europe/London': 'london', 'Australia/Sydney': 'sydney', 'Australia/Melbourne': 'sydney' }[TZ] || 'new_york'), cur: CUR };
   if (LG === 'zh') { const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@700&display=swap'; document.head.appendChild(l); }
-  document.title = { ko: '월하당 — 사주·궁합·별자리, 캐릭터마다 다른 풀이', en: 'Moonlit Hall — saju, compatibility & astrology readings', zh: '月下堂 — 八字·合盘·星座解读' }[LG];
+  document.title = { ko: '월하당 — 사주·궁합·별자리, 캐릭터마다 다른 풀이', en: 'Moonlit Hall — saju, compatibility & astrology readings', zh: '月下堂 — 八字·合盘·星座解读', ja: '月下堂 — 四柱推命・相性・星座占い' }[LG];
 })();
