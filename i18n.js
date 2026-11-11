@@ -232,6 +232,7 @@
     menu: [
       ['love', 'love', '💘', '내 연애는 언제 올까', '연애 패턴, 끌리는 사람, 상대가 오는 때', 'haerang'],
       ['money', 'money', '💰', '돈도 일도 언제 풀릴까', '돈이 모이는 구조와 새는 구멍', 'haerang'],
+      ['career', 'money', '💼', '커리어 사주', '타고난 일의 재능과 이직 타이밍', 'seoha', 0],
       ['self', 'life', '🪞', '나도 몰랐던 내 본성', '타고난 기질과 숨은 무기', 'haerang'],
       ['all', 'life', '📜', '평생 종합 사주', '인생 큰 흐름 · 대운 · 모든 장', 'haerang'],
       ['next', 'year', '🗓️', '2027 신년운세', '내년 열두 달, 달마다 할 일', 'haerang'],
@@ -267,6 +268,7 @@
     menu: [
       ['love', 'love', '💘', 'When will love come?', 'Your pattern, who you fall for, when they show up', 'haerang'],
       ['money', 'money', '💰', 'When do money and work click?', 'How your money builds and where it leaks', 'haerang'],
+      ['career', 'money', '💼', 'Career reading', 'The work you were born for, and when to move', 'seoha', 0],
       ['self', 'life', '🪞', 'The real you', 'Your nature and hidden weapon', 'haerang'],
       ['all', 'life', '📜', 'Full life reading', 'The big flow, luck pillars, every chapter', 'haerang'],
       ['next', 'year', '🗓️', '2027 forecast', 'Next year, month by month', 'haerang'],
@@ -302,6 +304,7 @@
     menu: [
       ['love', 'love', '💘', '我的桃花何时来', '恋爱模式、会被谁吸引、对方何时出现', 'haerang'],
       ['money', 'money', '💰', '钱和事业何时顺', '钱怎么聚、哪里漏', 'haerang'],
+      ['career', 'money', '💼', '事业八字', '天生擅长的工作与跳槽时机', 'seoha', 0],
       ['self', 'life', '🪞', '连我都不知道的本性', '天生气质与隐藏武器', 'haerang'],
       ['all', 'life', '📜', '一生综合八字', '人生大势 · 大运 · 全部章节', 'haerang'],
       ['next', 'year', '🗓️', '2027 新年运势', '明年十二个月，每月该做什么', 'haerang'],
@@ -345,6 +348,7 @@
       couple: { cat: '연인 궁합 · 연지 낭자', nm: '연지 낭자', hook: '"너랑 그 사람,<br>실이 이어져 있나 볼까?"', sub: '끌리는 이유, 싸우는 지점, 결혼까지 — 둘의 사주를 겹쳐 봐 줄게.', who: ['너부터! 이름이 뭐야?', '이제 그 사람 이름!'], wait: '붉은 실 두 가닥을 엮어 보는 중…' },
       group: { cat: '그룹 궁합 · 연지 낭자', nm: '연지 낭자', hook: '"우리 중에 누구랑<br>누가 제일 잘 맞을까?"', sub: '가족·친구·동료 2~6명. 각자 역할이랑 꿀조합, 삐걱 조합까지 다 알려 줄게.', who: ['첫 번째 사람 이름!', '다음 사람 이름!'], wait: '실을 여러 가닥 엮는 중…' },
       idol: { cat: '최애 궁합 · 연지 낭자', nm: '연지 낭자', hook: '"최애랑 나,<br>무슨 사이였을까?"', sub: '최애 생일만 알면 돼(시간은 몰라도 OK). 팬으로서 둘의 케미를 봐 줄게.', who: ['너부터! 이름이 뭐야?', '이제 최애 이름!'], wait: '최애랑 나 사이 실을 찾는 중…' },
+      career: { cat: '커리어 사주 · 서하 선생', nm: '서하 선생', hook: '"잘할 수 있는 일은<br>이미 사주에 있어요."', sub: '타고난 일의 재능, 잘 맞는 직업, 조직형인지 독립형인지, 그리고 이직·승진하기 좋은 해까지 짚어 드려요.', who: ['성함을 알려 주세요.'], wait: '일의 자리를 살피고 있어요…' },
       classic: { cat: '정통사주 · 서하 선생', nm: '서하 선생', hook: '"명리 원칙대로,<br>한 글자씩 읽어 드릴게요."', sub: '격국·용신·십성·신살·대운 전체를 11장에 걸쳐 정리해 드려요. 해랑사주에서 가장 깊은 풀이예요.', who: ['성함을 알려 주세요.'], wait: '원국을 펼쳐 격국을 잡고 있어요…' },
       night: { cat: '속궁합 · 연지 낭자 (29금)', nm: '연지 낭자', hook: '"둘이 있을 때<br>온도는 몇 도일까?"', sub: '누가 먼저 불을 붙이는지, 어디가 약한지, 둘이 붙으면 어디까지 뜨거워지는지. 돌려 말 안 해.', who: ['너부터! 이름이 뭐야?', '이제 그 사람 이름!'], wait: '둘 사이 온도를 재는 중…' },
       desire: { cat: '숨은 연애 본능 · 해랑 도령 (29금)', nm: '해랑 도령', hook: '"너 진짜로 끌리는 거,<br>남들은 모르지?"', sub: '겉으로 사귀는 타입 말고 진짜 몸이 반응하는 타입. 네 스위치, 내가 다 말해 줄게.', who: ['이름부터. 남한테 안 말할게.'], wait: '네 속을 들여다보는 중…' },
@@ -363,6 +367,7 @@
       couple: { cat: 'Couple match · Yeonji', nm: 'Yeonji', hook: '"You and them —<br>is the red thread tied?"', sub: 'Why you pull, where you clash, whether it leads to marriage — I\'ll lay your charts side by side.', who: ["You first! What's your name?", 'Now their name!'], wait: 'Twisting two red threads together…' },
       group: { cat: 'Group match · Yeonji', nm: 'Yeonji', hook: '"Who in your crew<br>clicks best?"', sub: "Family, friends, coworkers — 2 to 6 people. Everyone's role, the dream pairs and the bumpy ones.", who: ["First person's name!", "Next person's name!"], wait: 'Weaving a lot of threads…' },
       idol: { cat: 'You & your bias · Yeonji', nm: 'Yeonji', hook: '"You and your bias —<br>what\'s the chemistry?"', sub: "Just their birthday (time not needed). Your fan chemistry, read from both charts.", who: ["You first! What's your name?", "Now your bias's name!"], wait: 'Finding the thread to your bias…' },
+      career: { cat: 'Career reading · Seoha', nm: 'Seoha', hook: '"The work you\'re good at<br>is already in your chart."', sub: 'Your natural talent, the jobs that fit, whether you thrive in a team or on your own — and the best years to switch or step up.', who: ['May I have your name?'], wait: 'Reading the place of work in your chart…' },
       classic: { cat: 'Classic saju · Seoha', nm: 'Seoha', hook: '"By the old rules,<br>one character at a time."', sub: 'Structure, useful element, Ten Gods, stars and every luck pillar across 11 chapters — our deepest reading.', who: ['May I have your name?'], wait: 'Laying out your chart and finding its structure…' },
       night: { cat: 'Chemistry · Yeonji (19+)', nm: 'Yeonji', hook: '"How hot does it get<br>when you two are alone?"', sub: 'Who strikes the match, where each of you melts, how hot it gets when you two collide. No sugar-coating.', who: ["You first! What's your name?", 'Now their name!'], wait: 'Taking your temperature…' },
       desire: { cat: 'Hidden desire · Haerang (19+)', nm: 'Haerang', hook: '"What you really want —<br>nobody knows, right?"', sub: "Not the type you date — the type you're secretly drawn to. And the months your charm peaks.", who: ["Name first. I won't tell."], wait: 'Looking inside you…' },
@@ -381,6 +386,7 @@
       couple: { cat: '情侣合盘 · 胭脂娘子', nm: '胭脂娘子', hook: '"你和那个人，<br>红线连着吗？"', sub: '为什么吸引、会在哪吵、能不能走到结婚——把两人的命盘叠起来看。', who: ['先说你！叫什么名字？', '现在是那个人的名字！'], wait: '正在把两根红线编在一起…' },
       group: { cat: '团体合盘 · 胭脂娘子', nm: '胭脂娘子', hook: '"我们之中<br>谁和谁最合？"', sub: '家人·朋友·同事2到6人。每个人的角色、最佳组合和磨合组合。', who: ['第一个人的名字！', '下一个人的名字！'], wait: '正在编好多根线…' },
       idol: { cat: '本命合盘 · 胭脂娘子', nm: '胭脂娘子', hook: '"我和本命，<br>是什么缘分？"', sub: '只要本命的生日（不用时间）。看看作为粉丝的你们有什么化学反应。', who: ['先说你！叫什么名字？', '现在是本命的名字！'], wait: '正在找你和本命之间的线…' },
+      career: { cat: '事业八字 · 瑞夏先生', nm: '瑞夏先生', hook: '"您擅长的工作，<br>早就写在八字里。"', sub: '天生的工作才能、适合的职业、适合组织还是独立，以及跳槽升职的好年份。', who: ['请告诉我您的名字。'], wait: '正在查看事业宫…' },
       classic: { cat: '正统八字 · 瑞夏先生', nm: '瑞夏先生', hook: '"按命理规矩，<br>一字一字为您解读。"', sub: '格局、用神、十神、神煞、全部大运，共11章——本店最深入的解读。', who: ['请告诉我您的名字。'], wait: '正在排盘定格局…' },
       night: { cat: '亲密契合 · 胭脂娘子 (19+)', nm: '胭脂娘子', hook: '"你们独处时<br>温度有多高？"', sub: '谁先点火、哪里最没抵抗力、两人碰在一起能有多烫。不绕弯子。', who: ['先说你！叫什么名字？', '现在是那个人的名字！'], wait: '正在测你们之间的温度…' },
       desire: { cat: '隐藏的恋爱本能 · 海朗道令 (19+)', nm: '海朗道令', hook: '"你真正被什么吸引，<br>别人都不知道吧？"', sub: '不是你交往的类型，而是你暗地里被吸引的类型。还有你魅力爆发的月份。', who: ['先说名字。我不会告诉别人。'], wait: '正在看你的内心…' },

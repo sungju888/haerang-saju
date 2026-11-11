@@ -129,11 +129,21 @@
      가게 메뉴 → (19금이면 나이 확인) → 캐릭터 첫 화면 → 사람마다 생일 입력 → 맛보기 → 결제 → 전체 */
   const PXM = {   // 메뉴 id → [캐릭터, 사람 수(1·2·'n'), 19금]
     reunion: ['haerang', 2], marry: ['seoha', 1], some: ['yeonji', 2], couple: ['yeonji', 2], group: ['yeonji', 'n'],
-    idol: ['yeonji', 2], classic: ['seoha', 1], night: ['yeonji', 2, 1], desire: ['haerang', 1, 1], zodiac: ['selene', 1],
+    idol: ['yeonji', 2], classic: ['seoha', 1], career: ['seoha', 1], night: ['yeonji', 2, 1], desire: ['haerang', 1, 1], zodiac: ['selene', 1],
   };
   let PXID = null, PEOPLE = [], PXP = null, PXO = null;
   const PXT = id => S.px[id] || {};
-  const mediaOf = rd => { if (rd === 'haerang') return media('key', true); curMedia = ''; still.src = `m/${rd}/key.jpg?v=${window.CFG.MEDIA_V || 1}`; still.classList.add('kb'); vid.classList.remove('on'); vid.removeAttribute('src'); };
+  /* 캐릭터 배경: 해랑은 장면별 영상, 서하·연지·셀린은 첫 그림 영상(m/<캐릭터>/key.mp4)을 반복. 영상이 없으면 그림이 천천히 움직인다 */
+  const mediaOf = rd => {
+    if (rd === 'haerang') return media('key', true);
+    const name = rd + '/key'; if (curMedia === name) return; curMedia = name;
+    const base = `m/${rd}/key`, mv = '?v=' + (window.CFG.MEDIA_V || 1);
+    still.src = base + '.jpg' + mv; still.classList.add('kb');
+    vid.classList.remove('on'); vid.loop = true;
+    vid.onloadeddata = () => { vid.classList.add('on'); still.classList.remove('kb'); const p = vid.play(); if (p) p.catch(() => { }); };
+    vid.onerror = () => vid.classList.remove('on');
+    vid.src = base + '.mp4' + mv; vid.load();
+  };
   const freshB = () => Object.assign(B, { name: '', gender: null, cal: 'solar', leap: false, y: 1995, m: 1, d: 1, hh: null, mm: 0, place: I.place0 });
   function pxStart(id) {
     setRd(PXM[id][0]); PXID = id; PEOPLE = []; MODE = 'px'; freshB(); fillMe(); SPK = PXT(id).nm || NAME;
