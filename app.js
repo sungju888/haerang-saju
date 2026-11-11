@@ -1,4 +1,4 @@
-/* 해랑사주 퍼널: 첫 화면 → 사랑방 장면 4개 → 입력 → 보는 중 → 맛보기 → 6,900원 결제(토스페이먼츠) → 전체 풀이 */
+/* 해랑사주: 가게(캐릭터별 사주·무료 만세력) → 해랑 첫 화면 → 사랑방 장면 4개 → 입력 → 보는 중 → 맛보기 → 6,900원 결제(토스페이먼츠) → 전체 풀이 */
 (function () {
   const $ = s => document.querySelector(s);
   const ui = $('#ui'), still = $('#still'), vid = $('#vid'), app = $('#app'), back = $('#back');
@@ -48,12 +48,67 @@
   }
   function preload(name) { const l = document.createElement('link'); l.rel = 'preload'; l.as = 'image'; l.href = `m/${C}/${name}.jpg?v=${window.CFG.MEDIA_V || 1}`; document.head.appendChild(l); }
 
-  function render(html, blur) { app.classList.toggle('blur', !!blur); ui.className = 'fade'; ui.innerHTML = html; void ui.offsetWidth; ui.scrollTop = 0; }
+  function render(html, blur, shopMode) { app.classList.toggle('blur', !!blur); app.classList.toggle('shop', !!shopMode); ui.className = 'fade'; ui.innerHTML = html; void ui.offsetWidth; ui.scrollTop = 0; }
   const hist = [];
   function go(fn, ...a) { hist.push([fn, a]); back.classList.toggle('on', hist.length > 1); fn(...a); }
   back.onclick = () => { if (hist.length < 2) return; hist.pop(); const [fn, a] = hist[hist.length - 1]; back.classList.toggle('on', hist.length > 1); fn(...a); };
   const say = lines => `<div class="say">${lines.map(l => `<p>${esc(l)}</p>`).join('')}</div>`;
   const bubble = (lines, nar) => `<div class="bubble ${nar ? 'nar' : ''}">${nar ? '' : `<div class="who">${NAME}</div>`}${lines.map(l => `<p>${esc(l)}</p>`).join('')}</div>`;
+
+  /* ---- 0. 가게 첫 화면: 캐릭터마다 다른 사주를 고른다 ----
+     live 인 것만 누르면 들어가고, 나머지는 「곧 열려요」(그림·풀이를 만드는 중). 그림은 m/<캐릭터>/key.jpg */
+  const S = t.S;
+  const READERS = [
+    { id: 'haerang', live: true, img: 'm/haerang/key.jpg' },
+    { id: 'seoha', live: false, img: 'm/seoha/key.jpg' },
+    { id: 'yeonji', live: false, img: 'm/yeonji/key.jpg' },
+    { id: 'orion', live: false, img: 'm/orion/key.jpg' },
+  ];
+  let MODE = 'read';                       // 'read' = 해랑 풀이, 'manse' = 무료 만세력
+  function shop() {
+    track('shop');
+    const mv = '?v=' + (window.CFG.MEDIA_V || 1);
+    const owned = (() => { try { return JSON.parse(ls.get('cw_owned') || '[]'); } catch (e) { return []; } })();
+    const banner = r => { const [cat, nm, line] = S.banner[r.id]; return `<button class="bn ${r.live ? '' : 'off'}" data-r="${r.id}">
+        <img src="${r.img}${mv}" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><span class="bn-sh"></span>
+        <span class="bn-tx"><em>${esc(cat)}</em><b>${esc(nm)}</b><small>${esc(line)}</small>
+        <i>${r.live ? esc(S.from(I.money(I.FROM))) + ' · ' + esc(S.open) + ' ›' : esc(S.soon)}</i></span></button>`; };
+    render(`<div class="shopw">
+      <h1 class="sh-h">${esc(S.hi)}</h1><p class="sh-s">${esc(S.hiSub)}</p>
+      <div class="bns" id="bns">${READERS.map(banner).join('')}</div>
+      <div class="dots">${READERS.map((r, i) => `<span class="${i ? '' : 'on'}"></span>`).join('')}</div>
+      <h2 class="sh-t">${esc(S.secTopic)}</h2><p class="sh-ts">${esc(S.secTopicSub)}</p>
+      <div class="cats" id="cats">${S.cats.map(([k, n], i) => `<button data-c="${k}" class="${i ? '' : 'sel'}">${esc(n)}</button>`).join('')}</div>
+      <div class="menu" id="menu">${S.menu.map(([id, cat, ic, nm, d, rd, live]) => { const on = live !== 0; return `<button class="mn ${on ? '' : 'off'}" data-id="${id}" data-cat="${cat}">
+        <span class="mn-i">${rd !== 'free' ? `<img src="m/${rd}/key.jpg${mv}" alt="" loading="lazy" onerror="this.remove()">` : ''}<span>${ic}</span></span>
+        <span class="mn-t"><b>${esc(nm)}</b><small>${esc(d)}</small><em>${rd === 'free' ? esc(S.free) : on ? esc(S.from(I.money(I.FROM))) : esc(S.soon)}</em></span></button>`; }).join('')}</div>
+      ${owned.length ? `<h2 class="sh-t">${esc(S.secMine)}</h2><p class="sh-ts">${esc(S.mineD)}</p><div class="mine">${owned.slice(0, 5).map((o, i) => `<a class="mi" href="${BASE}?r=${o.rid}&k=${o.key}"><span>📜 ${esc(S.mineItem(i + 1))}</span><em>${esc(S.mineOpen)} ›</em></a>`).join('')}</div>` : ''}
+      <h2 class="sh-t">${esc(S.secSoon)}</h2><p class="sh-ts">${esc(S.soonD)}</p>
+      <div class="soons">${READERS.filter(r => !r.live).map(r => `<div class="sn"><img src="${r.img}${mv}" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><b>${esc(S.banner[r.id][0])}</b><small>${esc(S.banner[r.id][1])}</small></div>`).join('')}</div>
+      ${bizFoot()}</div>`, false, true);
+    ui.querySelectorAll('.bn').forEach(b => b.onclick = () => { const r = READERS.find(x => x.id === b.dataset.r); if (!r.live) { b.classList.add('shake'); setTimeout(() => b.classList.remove('shake'), 500); return; } track('pick_' + r.id); MODE = 'read'; B.focus = null; go(intro); });
+    ui.querySelectorAll('#cats button').forEach(b => b.onclick = () => { ui.querySelectorAll('#cats button').forEach(x => x.classList.toggle('sel', x === b)); ui.querySelectorAll('.mn').forEach(m => m.hidden = b.dataset.c !== 'all' && m.dataset.cat !== b.dataset.c); });
+    ui.querySelectorAll('.mn').forEach(b => b.onclick = () => {
+      const id = b.dataset.id; track('menu_' + id);
+      if (b.classList.contains('off')) { b.classList.add('shake'); setTimeout(() => b.classList.remove('shake'), 500); return; }
+      if (id === 'manse') { MODE = 'manse'; go(ask, 'who'); return; }
+      MODE = 'read'; B.focus = id === 'all' ? null : id; go(intro);
+    });
+    const bns = $('#bns'), dots = ui.querySelectorAll('.dots span');
+    bns.addEventListener('scroll', () => { const i = Math.round(bns.scrollLeft / (bns.firstElementChild.offsetWidth + 12)); dots.forEach((d, j) => d.classList.toggle('on', i === j)); }, { passive: true });
+  }
+
+  /* ---- 무료 만세력: 원국표만 보여 주고 해랑 풀이로 잇는다 ---- */
+  function manseView() {
+    track('manse_view');
+    const p = P;
+    render(`<div class="result"><section class="sec in"><h2 class="q">${esc(S.manseH(p.name))}</h2>
+      ${wonguk(p)}<div class="bubble"><div class="who">${NAME}</div><p>${esc(S.manseNote)}</p></div>
+      <button class="btn" id="hr">${esc(S.manseCta)}</button><button class="opt" id="ag">${esc(S.manseAgain)}</button>
+      ${bizFoot()}</section></div>`, true);
+    $('#hr').onclick = () => { track('manse_to_read'); MODE = 'read'; go(result); };
+    $('#ag').onclick = () => { MODE = 'manse'; go(ask, 'date'); };
+  }
 
   /* ---- 1. 첫 화면 ---- */
   function intro() {
@@ -148,7 +203,7 @@
       if (err) { render(bubble([err.message || t.inkErr]) + `<button class="btn" id="re">${t.retry}</button>`); $('#re').onclick = () => go(ask, 'date'); return; }
       P = res.p; RID = res.rid; KEY = res.key; OFFERS = res.offers; TOCL = res.toc;
       ls.set('cw_last', JSON.stringify({ rid: RID, key: KEY, p: P, offers: OFFERS, toc: TOCL }));
-      go(result);
+      go(MODE === 'manse' ? manseView : result);
     }, 1500);
   }
 
@@ -425,5 +480,5 @@
   }
   else if (/^[a-f0-9]{16}$/.test(qs.get('r') || '')) { if (qs.get('src') === 'home' || isStandalone()) track('home_open'); openFull(qs.get('r'), qs.get('k')); }
   else if (isStandalone() && (() => { try { return JSON.parse(ls.get('cw_owned') || '[]')[0]; } catch (e) { } })()) { const o = JSON.parse(ls.get('cw_owned'))[0]; track('home_open'); openFull(o.rid, o.key); }
-  else go(intro);
+  else go(shop);
 })();
