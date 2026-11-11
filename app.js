@@ -216,7 +216,7 @@
     $('#home').onclick = () => go(shop);
   }
   function showPx(f) {
-    track('px_full'); mediaOf(f.reader);
+    track('px_full'); mediaOf(f.reader); setHomeIcon(f.reader);
     render(`<div class="result"><section class="sec in">${pxHead(f)}${homeBox()}${(f.ch || []).map(pxCard).join('')}
       <button class="opt" id="home">${esc(S.toShop)}</button></section></div>`, true);
     bindHome(`${BASE}?r=${RID}&k=${KEY}&src=home`);
@@ -544,6 +544,7 @@
 
   /* ---- 6. 산 풀이 + 위 단계 ---- */
   function showFull(f, offers) {
+    setHomeIcon('haerang');
     app.classList.add('blur'); media('key', true);
     hist.length = 0; back.classList.remove('on');
     const link = `${BASE}?r=${RID}&k=${KEY}`;
@@ -585,9 +586,17 @@
   window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); bip = e; const b = document.getElementById('hgo'); if (b && !inApp) { b.hidden = false; const m = document.getElementById('hman'); if (m) m.textContent = ''; } });
   window.addEventListener('appinstalled', () => { track('a2hs_done'); const h = document.getElementById('home'); if (h) h.innerHTML = `<p class="hk">${t.homeDone}</p>`; });
 
+  /* 홈 화면 아이콘 = 결제한 캐릭터 얼굴. 안드로이드는 매니페스트, 아이폰은 apple-touch-icon 을 그 자리에서 갈아 끼운다 */
+  let HOME_RD = 'haerang';
+  const iconOf = (rd, z) => rd === 'haerang' || !rd ? `icon-${z}.png` : `icon-${rd}-${z}.png`;
+  function setHomeIcon(rd) {
+    HOME_RD = rd || 'haerang';
+    const at = document.querySelector('link[rel=apple-touch-icon]'); if (at) at.href = BASE + iconOf(HOME_RD, 180);
+    const fi = document.querySelector('link[rel=icon]'); if (fi) fi.href = BASE + iconOf(HOME_RD, 192);
+  }
   function manifestFor(url) {                       // 홈 아이콘이 이 풀이 주소로 바로 열리게(주소에 열쇠가 들어 있다)
     const m = { name: t.brand, short_name: t.brand, start_url: BASE + '?src=home', scope: BASE, display: 'standalone', background_color: '#0b0a10', theme_color: '#0b0a10',
-      icons: [192, 512].map(z => ({ src: `${BASE}icon-${z}.png`, sizes: `${z}x${z}`, type: 'image/png', purpose: 'any' })) };
+      icons: [192, 512].map(z => ({ src: BASE + iconOf(HOME_RD, z), sizes: `${z}x${z}`, type: 'image/png', purpose: 'any' })) };
     let l = document.querySelector('link[rel=manifest]'); if (!l) { l = document.createElement('link'); l.rel = 'manifest'; document.head.appendChild(l); }
     l.href = URL.createObjectURL(new Blob([JSON.stringify(m)], { type: 'application/manifest+json' }));
   }
@@ -601,7 +610,7 @@
       <div class="gsc" style="animation-delay:0s">${page}${bar}</div>
       <div class="gsc" style="animation-delay:2.5s">${page}<div class="gmenu" style="${v26 ? 'left:6px' : 'right:6px'}"><div class="gshare">⇪ ${esc(t.gShare)}</div><i></i><i></i></div></div>
       <div class="gsc" style="animation-delay:5s"><div class="gsheet"><i class="ghd"></i><i class="gl"></i><i class="gl"></i><div class="gadd">⊞ <span></span></div></div><span class="garrow">↓</span></div>
-      <div class="gsc" style="animation-delay:7.5s"><div class="ghome"><u></u><u></u><u></u><img src="icon-192.png" alt=""><u></u><u></u></div></div>
+      <div class="gsc" style="animation-delay:7.5s"><div class="ghome"><u></u><u></u><u></u><img src="${iconOf(HOME_RD, 192)}" alt=""><u></u><u></u></div></div>
     </div><div class="gst"><span class="gbadge">${esc(t.safariOnly)}</span>
       <ol><li>${v26 ? t.ios26 : t.iosOld}</li>${v26 ? `<li>${t.iosShare}</li>` : ''}<li>${t.iosAdd}</li><li>${t.iosOk}</li></ol></div></div>`;
   }
@@ -621,7 +630,7 @@
       how = iosGuide(/Version\/(2[6-9]|[3-9]\d)/.test(UA));
     }
     else { how = t.andHow; btn = `<button class="btn" id="hgo" ${bip ? '' : 'hidden'}>${t.addBtn}</button><p class="hk" id="hman">${bip ? '' : t.andMan}</p>`; }
-    return `<div class="homebox" id="home"><div class="hh"><img src="icon-192.png" alt=""><div><b>${t.homeT}</b><span>${t.homeS}</span></div></div>
+    return `<div class="homebox" id="home"><div class="hh"><img src="${iconOf(HOME_RD, 192)}" alt=""><div><b>${t.homeT}</b><span>${t.homeS}</span></div></div>
       <div class="hw">${how}</div>${btn}<button class="lnk" id="cp">${t.copyOnly}</button></div>`;
   }
   function bindHome(link) {
