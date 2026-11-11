@@ -184,7 +184,7 @@
       <section class="sec">${say([t.thisChart(p.name)])}
         ${wonguk(p)}
         <div class="bubble me-card"><div class="who">${NAME}</div><div class="h">${esc(t.meH(p.me))}</div>
-          <p>${esc(p.me.one)}. ${esc(p.me.season)}</p></div>
+          <p>${esc(p.me.one)}${LG === 'zh' ? '。' : '. '}${esc(p.me.season)}</p></div>
       </section>
       <section class="sec">${say([t.sting])}
         <div class="bubble cold"><div class="who">${NAME}</div>${p.cold.map(l => `<p>${esc(l)}</p>`).join('')}</div>
