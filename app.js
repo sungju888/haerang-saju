@@ -86,7 +86,7 @@
         <span class="mn-i">${rd !== 'free' ? `<img src="m/${rd}/key.jpg${mv}" alt="" loading="lazy" onerror="this.remove()">` : ''}<span>${ic}</span></span>
         <span class="mn-t"><b>${esc(nm)}</b><small>${esc(d)}</small><em>${rd === 'free' ? esc(S.free) : !on ? esc(S.soon) : PXM[id] ? esc(I.money(PXPRICE(id))) : esc(S.from(I.money(I.FROM)))}</em></span></button>`; }).join('')}</div>
       ${owned.length ? `<h2 class="sh-t">${esc(S.secMine)}</h2><p class="sh-ts">${esc(S.mineD)}</p><div class="mine">${owned.slice(0, 5).map((o, i) => `<a class="mi" href="${BASE}?r=${o.rid}&k=${o.key}"><span>📜 ${esc(S.mineItem(i + 1))}</span><em>${esc(S.mineOpen)} ›</em></a>`).join('')}</div>` : ''}
-      <h2 class="sh-t">${esc(S.secSoon)}</h2><p class="sh-ts">${esc(S.soonD)}</p>
+      ${READERS.some(r => !r.live) ? `<h2 class="sh-t">${esc(S.secSoon)}</h2><p class="sh-ts">${esc(S.soonD)}</p>` : ''}
       <div class="soons">${READERS.filter(r => !r.live).map(r => `<div class="sn"><img src="${r.img}${mv}" alt="" loading="lazy" onerror="this.style.visibility='hidden'"><b>${esc(S.banner[r.id][0])}</b><small>${esc(S.banner[r.id][1])}</small></div>`).join('')}</div>
       ${bizFoot()}</div>`, false, true);
     ui.querySelectorAll('.bn').forEach(b => b.onclick = () => { const r = READERS.find(x => x.id === b.dataset.r); if (!r.live) { b.classList.add('shake'); setTimeout(() => b.classList.remove('shake'), 500); return; } track('pick_' + r.id); if (BANNER_GO[r.id]) { pxStart(BANNER_GO[r.id]); return; } MODE = 'read'; B.focus = null; go(intro); });
