@@ -62,7 +62,7 @@
     { id: 'haerang', live: true, img: 'm/haerang/key.jpg' },
     { id: 'seoha', live: false, img: 'm/seoha/key.jpg' },
     { id: 'yeonji', live: false, img: 'm/yeonji/key.jpg' },
-    { id: 'orion', live: false, img: 'm/orion/key.jpg' },
+    { id: 'selene', live: false, img: 'm/selene/key.jpg' },
   ];
   let MODE = 'read';                       // 'read' = 해랑 풀이, 'manse' = 무료 만세력
   function shop() {
