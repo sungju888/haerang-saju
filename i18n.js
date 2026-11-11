@@ -243,8 +243,8 @@
       ['group', 'match', '👥', '그룹 궁합', '가족·친구·동료, 누구랑 잘 맞나', 'yeonji', 0],
       ['idol', 'match', '⭐', '최애와 나의 궁합', '최애 생일로 보는 우리 사이', 'yeonji', 0],
       ['classic', 'life', '🖌️', '정통사주', '명리 원칙대로 한 글자씩', 'seoha', 0],
-      ['night', 'adult', '🔥', '속궁합 (19)', '둘의 끌림과 밤의 온도', 'yeonji', 0],
-      ['desire', 'adult', '🌙', '숨은 연애 본능 (19)', '내가 끌리는 방식, 원하는 것', 'haerang', 0],
+      ['night', 'adult', '🔥', '속궁합 (29금)', '둘이 붙으면 몇 도까지 올라갈까', 'yeonji', 0],
+      ['desire', 'adult', '🌙', '숨은 연애 본능 (29금)', '네 스위치는 어디 있을까', 'haerang', 0],
       ['zodiac', 'star', '✨', '별자리 운세', '태어난 순간의 하늘로 보는 나', 'selene', 0],
     ],
     hi: '오늘 뭐가 궁금해?', hiSub: '캐릭터마다 보는 방법이 달라. 마음 가는 데로 골라.',
@@ -334,7 +334,7 @@
   };
   /* 새 사주 상품 화면 말 */
   Object.assign(T.ko.S, {
-    scoreL: '궁합 점수', adultQ: '여기부터는 19세 이상만', adultD: '노골적인 내용은 없지만, 어른들의 연애 얘기야.', adultYes: '네, 19세 이상이에요', adultNo: '돌아갈게요',
+    scoreL: '궁합 점수', adultQ: '29금 — 성인만 들어와', adultD: '수위 꽤 높아. 어른들끼리의 솔직한 밤 얘기야.', adultYes: '네, 19세 이상이에요', adultNo: '돌아갈게요',
     groupQ: n => `지금 ${n}명 넣었어`, groupAdd: '한 명 더 넣기', groupDone: n => `${n}명으로 궁합 보기`, noName: i => `${i}번`,
     lockedMore: '나머지 장은 결제하면 바로 열려.', toShop: '다른 사주 보러 가기',
     px: {
@@ -345,13 +345,13 @@
       group: { cat: '그룹 궁합 · 연지 낭자', nm: '연지 낭자', hook: '"우리 중에 누구랑<br>누가 제일 잘 맞을까?"', sub: '가족·친구·동료 2~6명. 각자 역할이랑 꿀조합, 삐걱 조합까지 다 알려 줄게.', who: ['첫 번째 사람 이름!', '다음 사람 이름!'], wait: '실을 여러 가닥 엮는 중…' },
       idol: { cat: '최애 궁합 · 연지 낭자', nm: '연지 낭자', hook: '"최애랑 나,<br>무슨 사이였을까?"', sub: '최애 생일만 알면 돼(시간은 몰라도 OK). 팬으로서 둘의 케미를 봐 줄게.', who: ['너부터! 이름이 뭐야?', '이제 최애 이름!'], wait: '최애랑 나 사이 실을 찾는 중…' },
       classic: { cat: '정통사주 · 서하 선생', nm: '서하 선생', hook: '"명리 원칙대로,<br>한 글자씩 읽어 드릴게요."', sub: '격국·용신·십성·신살·대운 전체를 11장에 걸쳐 정리해 드려요. 해랑사주에서 가장 깊은 풀이예요.', who: ['성함을 알려 주세요.'], wait: '원국을 펼쳐 격국을 잡고 있어요…' },
-      night: { cat: '속궁합 · 연지 낭자 (19)', nm: '연지 낭자', hook: '"둘이 있을 때<br>온도는 몇 도일까?"', sub: '둘의 끌림과 속도, 원하는 분위기까지. 노골적이진 않게, 대신 솔직하게.', who: ['너부터! 이름이 뭐야?', '이제 그 사람 이름!'], wait: '둘 사이 온도를 재는 중…' },
-      desire: { cat: '숨은 연애 본능 · 해랑 도령 (19)', nm: '해랑 도령', hook: '"너 진짜로 끌리는 거,<br>남들은 모르지?"', sub: '겉으로 사귀는 타입 말고, 속으로 끌리는 타입. 네 매력이 터지는 달까지.', who: ['이름부터. 남한테 안 말할게.'], wait: '네 속을 들여다보는 중…' },
+      night: { cat: '속궁합 · 연지 낭자 (29금)', nm: '연지 낭자', hook: '"둘이 있을 때<br>온도는 몇 도일까?"', sub: '누가 먼저 불을 붙이는지, 어디가 약한지, 둘이 붙으면 어디까지 뜨거워지는지. 돌려 말 안 해.', who: ['너부터! 이름이 뭐야?', '이제 그 사람 이름!'], wait: '둘 사이 온도를 재는 중…' },
+      desire: { cat: '숨은 연애 본능 · 해랑 도령 (29금)', nm: '해랑 도령', hook: '"너 진짜로 끌리는 거,<br>남들은 모르지?"', sub: '겉으로 사귀는 타입 말고 진짜 몸이 반응하는 타입. 네 스위치, 내가 다 말해 줄게.', who: ['이름부터. 남한테 안 말할게.'], wait: '네 속을 들여다보는 중…' },
       zodiac: { cat: '별자리 운세 · 셀린', nm: '셀린', hook: '"네가 태어난 순간,<br>하늘은 이랬어."', sub: '태양·달·상승 별자리부터 금성·화성, 내년 목성까지. 태어난 시간을 알면 더 정확해.', who: ['이름이 뭐야?'], wait: '그날 밤하늘을 펼치는 중…' },
     },
   });
   Object.assign(T.en.S, {
-    scoreL: 'Match score', adultQ: '19+ only from here', adultD: "Nothing explicit — but it's grown-up love talk.", adultYes: "Yes, I'm 19 or older", adultNo: 'Take me back',
+    scoreL: 'Match score', adultQ: '19+ only from here', adultD: "It gets spicy. Grown-up, honest after-dark talk.", adultYes: "Yes, I'm 19 or older", adultNo: 'Take me back',
     groupQ: n => `${n} added so far`, groupAdd: 'Add one more', groupDone: n => `Read the match for ${n}`, noName: i => `Person ${i}`,
     lockedMore: 'The rest opens the moment you pay.', toShop: 'Back to all readings',
     px: {
@@ -362,13 +362,13 @@
       group: { cat: 'Group match · Yeonji', nm: 'Yeonji', hook: '"Who in your crew<br>clicks best?"', sub: "Family, friends, coworkers — 2 to 6 people. Everyone's role, the dream pairs and the bumpy ones.", who: ["First person's name!", "Next person's name!"], wait: 'Weaving a lot of threads…' },
       idol: { cat: 'You & your bias · Yeonji', nm: 'Yeonji', hook: '"You and your bias —<br>what\'s the chemistry?"', sub: "Just their birthday (time not needed). Your fan chemistry, read from both charts.", who: ["You first! What's your name?", "Now your bias's name!"], wait: 'Finding the thread to your bias…' },
       classic: { cat: 'Classic saju · Seoha', nm: 'Seoha', hook: '"By the old rules,<br>one character at a time."', sub: 'Structure, useful element, Ten Gods, stars and every luck pillar across 11 chapters — our deepest reading.', who: ['May I have your name?'], wait: 'Laying out your chart and finding its structure…' },
-      night: { cat: 'Chemistry · Yeonji (19+)', nm: 'Yeonji', hook: '"How hot does it get<br>when you two are alone?"', sub: 'Your pull, your pace, the mood you each crave. Not explicit — just honest.', who: ["You first! What's your name?", 'Now their name!'], wait: 'Taking your temperature…' },
+      night: { cat: 'Chemistry · Yeonji (19+)', nm: 'Yeonji', hook: '"How hot does it get<br>when you two are alone?"', sub: 'Who strikes the match, where each of you melts, how hot it gets when you two collide. No sugar-coating.', who: ["You first! What's your name?", 'Now their name!'], wait: 'Taking your temperature…' },
       desire: { cat: 'Hidden desire · Haerang (19+)', nm: 'Haerang', hook: '"What you really want —<br>nobody knows, right?"', sub: "Not the type you date — the type you're secretly drawn to. And the months your charm peaks.", who: ["Name first. I won't tell."], wait: 'Looking inside you…' },
       zodiac: { cat: 'Astrology · Selene', nm: 'Selene', hook: '"The moment you were born,<br>this was the sky."', sub: 'Sun, Moon and Rising, Venus and Mars, and next year\'s Jupiter. Birth time makes it sharper.', who: ["What's your name?"], wait: 'Unrolling that night\'s sky…' },
     },
   });
   Object.assign(T.zh.S, {
-    scoreL: '契合分', adultQ: '以下内容仅限19岁以上', adultD: '没有露骨内容，但是成年人的恋爱话题。', adultYes: '是的，我已满19岁', adultNo: '返回',
+    scoreL: '契合分', adultQ: '以下内容仅限19岁以上', adultD: '尺度很大，是成年人之间坦白的夜话。', adultYes: '是的，我已满19岁', adultNo: '返回',
     groupQ: n => `已经加了${n}人`, groupAdd: '再加一个人', groupDone: n => `看${n}人的合盘`, noName: i => `${i}号`,
     lockedMore: '其余章节付款后马上解锁。', toShop: '去看其他解读',
     px: {
@@ -379,7 +379,7 @@
       group: { cat: '团体合盘 · 胭脂娘子', nm: '胭脂娘子', hook: '"我们之中<br>谁和谁最合？"', sub: '家人·朋友·同事2到6人。每个人的角色、最佳组合和磨合组合。', who: ['第一个人的名字！', '下一个人的名字！'], wait: '正在编好多根线…' },
       idol: { cat: '本命合盘 · 胭脂娘子', nm: '胭脂娘子', hook: '"我和本命，<br>是什么缘分？"', sub: '只要本命的生日（不用时间）。看看作为粉丝的你们有什么化学反应。', who: ['先说你！叫什么名字？', '现在是本命的名字！'], wait: '正在找你和本命之间的线…' },
       classic: { cat: '正统八字 · 瑞夏先生', nm: '瑞夏先生', hook: '"按命理规矩，<br>一字一字为您解读。"', sub: '格局、用神、十神、神煞、全部大运，共11章——本店最深入的解读。', who: ['请告诉我您的名字。'], wait: '正在排盘定格局…' },
-      night: { cat: '亲密契合 · 胭脂娘子 (19+)', nm: '胭脂娘子', hook: '"你们独处时<br>温度有多高？"', sub: '两人的吸引、节奏、各自想要的氛围。不露骨，但很坦白。', who: ['先说你！叫什么名字？', '现在是那个人的名字！'], wait: '正在测你们之间的温度…' },
+      night: { cat: '亲密契合 · 胭脂娘子 (19+)', nm: '胭脂娘子', hook: '"你们独处时<br>温度有多高？"', sub: '谁先点火、哪里最没抵抗力、两人碰在一起能有多烫。不绕弯子。', who: ['先说你！叫什么名字？', '现在是那个人的名字！'], wait: '正在测你们之间的温度…' },
       desire: { cat: '隐藏的恋爱本能 · 海朗道令 (19+)', nm: '海朗道令', hook: '"你真正被什么吸引，<br>别人都不知道吧？"', sub: '不是你交往的类型，而是你暗地里被吸引的类型。还有你魅力爆发的月份。', who: ['先说名字。我不会告诉别人。'], wait: '正在看你的内心…' },
       zodiac: { cat: '星座运势 · 瑟琳', nm: '瑟琳', hook: '"你出生的那一刻，<br>星空是这样的。"', sub: '太阳·月亮·上升，金星·火星，还有明年的木星。知道出生时间会更准。', who: ['你叫什么名字？'], wait: '正在展开那晚的星空…' },
     },
